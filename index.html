@@ -7,84 +7,78 @@
     <title>Seongho's Homepage</title>
     <style>
         :root {
-            --beige: #F5F1E2;          /* 배경 */
-            --bar: #EFE7CF;            /* 상단 띠 색 */
-            --ink: #2b2b2b;            /* 아이콘/텍스트 색 */
-            --hover: rgba(0,0,0,.06);  /* 버튼 hover 배경 */
-            --ring: rgba(0,0,0,.25);   /* 포커스 링 */
+            --beige: beige;
+            --bar: #EFE7CF;
+            --ink: #2b2b2b;
+            --hover: rgba(0,0,0,.06);
+            --ring: rgba(0,0,0,.25);
             --bar-height: 56px;
             --side-pad: 12px;
+            --menu-width: 240px;
+            --divider: rgba(0,0,0,.2);
         }
         html, body { height: 100%; margin: 0; }
         body {
             background: var(--beige);
             min-height: 100dvh;
             color: var(--ink);
+            overflow-x: hidden;
         }
-        /* ===== 상단 띠 ===== */
         .topbar {
-            position: fixed;
-            inset: 0 0 auto 0; /* top:0; left:0; right:0 */
-            height: var(--bar-height);
-            background: var(--bar);
-            border-bottom: 1px solid rgba(0,0,0,.08);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0 var(--side-pad);
-            box-sizing: border-box;
-            z-index: 10;
+            position: fixed; inset: 0 0 auto 0; height: var(--bar-height);
+            background: var(--bar); border-bottom: 1px solid rgba(0,0,0,.08);
+            display: flex; align-items: center; gap: 8px;
+            padding: 0 var(--side-pad); box-sizing: border-box; z-index: 20;
         }
         .spacer { height: var(--bar-height); }
-        /* ===== 버튼 공통 ===== */
         .btn {
-            -webkit-tap-highlight-color: transparent;
-            appearance: none;
-            border: none;
-            outline: none;
-            background: transparent;
-            padding: 6px;
-            border-radius: 10px;
-            display: grid;
-            place-items: center;
-            width: 40px; height: 40px;
-            cursor: pointer;
+            -webkit-tap-highlight-color: transparent; appearance: none;
+            border: none; outline: none; background: transparent;
+            padding: 6px; border-radius: 10px;
+            display: grid; place-items: center;
+            width: 40px; height: 40px; cursor: pointer;
         }
         .btn:hover { background: var(--hover); }
         .btn:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
-        /* ===== 햄버거 아이콘 ===== */
-        .burger {
-            position: relative;
-            display: block;           /* ✅ inline 요소의 width/height 무시 방지 */
-            width: 22px; height: 14px;
+        .burger { position: relative; display: block; width: 22px; height: 14px; }
+        .burger span, .burger::before, .burger::after {
+            content: ""; position: absolute; left: 0; right: 0; height: 2px;
+            background: var(--ink); border-radius: 2px;
         }
-        .burger span,
-        .burger::before,
-        .burger::after {
-            content: "";
-            position: absolute;
-            left: 0; right: 0;
-            height: 2px;
-            background: var(--ink);
-            border-radius: 2px;
-        }
-        .burger span { top: 6px; }
-        .burger::before { top: 0; }
-        .burger::after { bottom: 0; }
-        /* ===== 홈 버튼 전용 ===== */
-        .btn.home {
-            background: transparent;
-            color: #2b2b2b;
-        }
+        .burger span { top: 6px; } .burger::before { top: 0; } .burger::after { bottom: 0; }
+        .btn.home { background: transparent; color: #2b2b2b; }
         .btn.home:hover { background: var(--hover); }
         .btn.home:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
         .icon { width: 22px; height: 22px; display: block; }
+        .menu {
+            position: fixed; top: 0; left: 0; bottom: 0;
+            width: var(--menu-width); background: #fff;
+            box-shadow: 2px 0 6px rgba(0,0,0,.18);
+            transform: translateX(-100%); transition: transform .28s ease;
+            z-index: 15; padding: 16px; box-sizing: border-box; overflow-y: auto;
+        }
+        .menu.open { transform: translateX(0); }
+        .overlay {
+            position: fixed; inset: 0; background: beige;
+            opacity: 0; pointer-events: none; transition: opacity .28s ease;
+            z-index: 14;
+        }
+        .overlay.show { opacity: 1; pointer-events: auto; }
+        .menu-title { margin: 0 0 10px; font-weight: 800; font-size: 1.25rem; }
+        .divider { height: 1px; background: var(--divider); margin: 10px 0 12px; }
+        .section-title { margin: 0 0 6px; font-weight: 700; }
+        .submenu { list-style: none; margin: 0; padding: 0; }
+        .submenu a {
+            display: block; padding: 6px 0 6px 18px; color: var(--ink);
+            text-decoration: none; border-radius: 6px; position: relative;
+        }
+        .submenu a::before { content: "└ "; position: absolute; left: 0; top: 6px; }
+        .submenu a:hover { background: var(--hover); }
     </style>
 </head>
 <body>
-    <!-- 상단 띠 -->
     <header class="topbar" role="banner">
-        <button class="btn" type="button" aria-label="메뉴">
+        <button class="btn" type="button" aria-label="메뉴" onclick="toggleMenu()">
             <i class="burger"><span></span></i>
         </button>
         <a class="btn home" href="/" aria-label="홈">
@@ -93,12 +87,43 @@
                 <path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"></path>
             </svg>
         </a>
-        <!-- 필요 시 제목/로고를 이곳에 배치할 수 있습니다 -->
     </header>
-
-    <!-- 상단 고정 띠 아래의 공간 확보용 -->
     <div class="spacer" aria-hidden="true"></div>
-
-    <!-- 본문은 비워둠 (배경만 보이도록) -->
+    <nav class="menu" id="menu" aria-label="사이드 메뉴">
+        <h2 class="menu-title">MENU</h2>
+        <div class="divider"></div>
+        <h3 class="section-title">My project</h3>
+        <ul class="submenu" role="list">
+            <li><a href="#">Physics project</a></li>
+            <li><a href="#">Minecraft project</a></li>
+        </ul>
+        <div class="divider"></div>
+        <h3 class="section-title">Minecraft</h3>
+        <ul class="submenu" role="list">
+            <li><a href="#">MS Kingdom</a></li>
+        </ul>
+        <div class="divider"></div>
+    </nav>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const overlay = document.getElementById('overlay');
+            const isOpen = menu.classList.toggle('open');
+            overlay.classList.toggle('show', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('menu');
+                const overlay = document.getElementById('overlay');
+                if (menu.classList.contains('open')) {
+                    menu.classList.remove('open');
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
