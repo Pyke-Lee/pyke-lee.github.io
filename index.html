@@ -13,9 +13,76 @@
             background: beige; 
             min-height: 100dvh; /* 모바일 브라우저 안전한 전체 높이 */
         }
+        .topbar {
+            position: fixed;
+            inset: 0 0 auto 0; /* top:0; left:0; right:0 */
+            height: var(--bar-height);
+            background: var(--bar);
+            border-bottom: 1px solid rgba(0,0,0,.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 var(--side-pad);
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .spacer { height: var(--bar-height); }
+        /* ===== 버튼 공통 ===== */
+        .btn {
+            -webkit-tap-highlight-color: transparent;
+            appearance: none;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 6px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            width: 40px; height: 40px;
+            cursor: pointer;
+        }
+        .btn:hover { background: var(--hover); }
+        .btn:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
+        /* ===== 햄버거 아이콘 ===== */
+        .burger {
+            position: relative;
+            width: 22px; height: 14px;
+        }
+        .burger span,
+        .burger::before,
+        .burger::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: var(--ink);
+            border-radius: 2px;
+        }
+        .burger span { top: 6px; }
+        .burger::before { top: 0; }
+        .burger::after { bottom: 0; }
+        /* ===== 홈 아이콘 (SVG 래퍼) ===== */
+        .icon { width: 22px; height: 22px; display: block; }
     </style>
 </head>
 <body>
-    <!-- 비워둡니다: 어떤 요소도 렌더링하지 않음 -->
+    <!-- 상단 띠 -->
+    <header class="topbar" role="banner">
+        <button class="btn" type="button" aria-label="메뉴">
+            <i class="burger"><span></span></i>
+        </button>
+        <a class="btn" href="/" aria-label="홈">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 10.5 12 3l9 7.5"></path>
+                <path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"></path>
+            </svg>
+        </a>
+    <!-- 필요 시 제목/로고를 이곳에 배치할 수 있습니다 -->
+    </header>
+
+    <!-- 상단 고정 띠 아래의 공간 확보용 -->
+    <div class="spacer" aria-hidden="true"></div>
+
+<!-- 본문은 비워둠 (배경만 보이도록) -->
 </body>
 </html>
