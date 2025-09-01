@@ -4,15 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>Pyke's Homepage</title>
+    <title>내 깃허브 페이지</title>
     <style>
-        /* 전체 화면을 베이지색으로, 여백/스크롤 제거 */
-        html, body { height: 100%; margin: 0; }
-        body { 
-            /* CSS 표준 색상명: beige = #F5F5DC */
-            background: beige; 
-            min-height: 100dvh; /* 모바일 브라우저 안전한 전체 높이 */
+        :root {
+            --beige: #F5F5DC;          /* 배경 */
+            --bar: #EFE7CF;            /* 상단 띠 색 */
+            --ink: #2b2b2b;            /* 아이콘/텍스트 색 */
+            --hover: rgba(0,0,0,.06);  /* 버튼 hover 배경 */
+            --ring: rgba(0,0,0,.25);   /* 포커스 링 */
+            --bar-height: 56px;
+            --side-pad: 12px;
         }
+        html, body { height: 100%; margin: 0; }
+        body {
+            background: var(--beige);
+            min-height: 100dvh;
+            color: var(--ink);
+        }
+        /* ===== 상단 띠 ===== */
         .topbar {
             position: fixed;
             inset: 0 0 auto 0; /* top:0; left:0; right:0 */
@@ -46,6 +55,7 @@
         /* ===== 햄버거 아이콘 ===== */
         .burger {
             position: relative;
+            display: block;           /* ✅ inline 요소의 width/height 무시 방지 */
             width: 22px; height: 14px;
         }
         .burger span,
@@ -77,12 +87,12 @@
                 <path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"></path>
             </svg>
         </a>
-    <!-- 필요 시 제목/로고를 이곳에 배치할 수 있습니다 -->
+        <!-- 필요 시 제목/로고를 이곳에 배치할 수 있습니다 -->
     </header>
 
     <!-- 상단 고정 띠 아래의 공간 확보용 -->
     <div class="spacer" aria-hidden="true"></div>
 
-<!-- 본문은 비워둠 (배경만 보이도록) -->
+    <!-- 본문은 비워둠 (배경만 보이도록) -->
 </body>
 </html>
