@@ -3,13 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex">
+    <!-- 검색 노출을 원하면 아래 robots 메타를 제거하거나 index,follow로 변경하세요 -->
+    <!-- <meta name="robots" content="index,follow"> -->
+    <meta name="description" content="Seongho의 Unity / DirectX / Minecraft 프로젝트 포트폴리오">
+    <meta property="og:title" content="Seongho's Homepage">
+    <meta property="og:description" content="Unity, DirectX, Minecraft 프로젝트 모음">
+    <meta property="og:type" content="website">
+    <!-- 실제 배포 URL로 교체하세요 -->
+    <!-- <meta property="og:url" content="https://username.github.io/repo/"> -->
+    <!-- 썸네일 이미지가 있다면 -->
+    <!-- <meta property="og:image" content="https://username.github.io/repo/og.png"> -->
+    <link rel="icon" href="/favicon.ico">
     <title>Seongho's Homepage</title>
     <style>
         :root {
-            --beige: #F5F1E2;
-            --bar: #EFE7CF;
-            --overlay: #D1CEC0;
+            --beige: #F5F1E2;   /* 페이지 배경 */
+            --bar: #EFE7CF;     /* 상단 바 */
+            --overlay: #D1CEC0; /* 메뉴 오버레이 */
             --ink: #2b2b2b;
             --hover: rgba(0,0,0,.06);
             --ring: rgba(0,0,0,.25);
@@ -18,13 +28,44 @@
             --menu-width: 380px;
             --divider: rgba(0,0,0,.2);
         }
+
+        /* 사용자 환경이 모션 최소화를 선호하면 전환/애니메이션 제거 */
+        @media (prefers-reduced-motion: reduce) {
+          * { animation: none !important; transition: none !important; }
+        }
+
         html, body { height: 100%; margin: 0; }
         body {
             background: var(--beige);
             min-height: 100dvh;
             color: var(--ink);
             overflow-x: hidden;
+            /* iOS safe area 보정(선택) */
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
+
+        /* 접근성: 스킵 링크(포커스 시에만 보이도록) */
+        .visually-hidden-focusable {
+            position: absolute;
+            left: -9999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .visually-hidden-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            padding: 8px 12px;
+            margin: 4px;
+            background: var(--bar);
+            color: var(--ink);
+            border-radius: 8px;
+            box-shadow: 0 0 0 3px var(--ring);
+        }
+
         .topbar {
             position: fixed; inset: 0 0 auto 0; height: var(--bar-height);
             background: var(--bar); border-bottom: 1px solid rgba(0,0,0,.08);
@@ -32,6 +73,7 @@
             padding: 0 var(--side-pad); box-sizing: border-box; z-index: 20;
         }
         .spacer { height: var(--bar-height); }
+
         .btn {
             -webkit-tap-highlight-color: transparent; appearance: none;
             border: none; outline: none; background: transparent;
@@ -41,30 +83,39 @@
         }
         .btn:hover { background: var(--hover); }
         .btn:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
+
         .burger { position: relative; display: block; width: 22px; height: 14px; }
         .burger span, .burger::before, .burger::after {
             content: ""; position: absolute; left: 0; right: 0; height: 2px;
             background: var(--ink); border-radius: 2px;
         }
         .burger span { top: 6px; } .burger::before { top: 0; } .burger::after { bottom: 0; }
+
         .btn.home { background: transparent; color: #2b2b2b; }
         .btn.home:hover { background: var(--hover); }
         .btn.home:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
+
         .icon { width: 22px; height: 22px; display: block; }
+
         .menu {
             position: fixed; top: 0; left: 0; bottom: 0;
-            width: var(--menu-width); background: --beige;
+            width: var(--menu-width);
+            max-width: 86vw;               /* 작은 화면에서 넘침 방지 */
+            background: var(--beige);      /* CSS 변수 올바른 사용 */
             box-shadow: 2px 0 6px rgba(0,0,0,.18);
             transform: translateX(-100%); transition: transform .28s ease;
             z-index: 15; padding: 16px; box-sizing: border-box; overflow-y: auto;
         }
         .menu.open { transform: translateX(0); }
+
         .overlay {
-            position: fixed; inset: 0; background: --overlay;
+            position: fixed; inset: 0;
+            background: var(--overlay);    /* CSS 변수 올바른 사용 */
             opacity: 0; pointer-events: none; transition: opacity .28s ease;
             z-index: 14;
         }
         .overlay.show { opacity: 1; pointer-events: auto; }
+
         .menu-title { margin: 0 0 10px; font-weight: 800; font-size: 1.25rem; }
         .divider { height: 1px; background: var(--divider); margin: 10px 0 12px; }
         .section-title { margin: 0 0 6px; font-weight: 700; }
@@ -78,34 +129,45 @@
     </style>
 </head>
 <body>
+    <!-- 스킵 링크: 키보드 사용자가 바로 본문으로 이동 가능 -->
+    <a href="#content" class="visually-hidden-focusable">본문으로 건너뛰기</a>
+
     <header class="topbar" role="banner">
-        <button class="btn" type="button" aria-label="메뉴" onclick="toggleMenu()">
+        <button class="btn" type="button" aria-label="메뉴" aria-controls="menu" aria-expanded="false" onclick="toggleMenu()">
             <i class="burger"><span></span></i>
         </button>
-        <a class="btn home" href="/" aria-label="홈">
+        <!-- 프로젝트 페이지에서도 안전하도록 ./ 사용 -->
+        <a class="btn home" href="./" aria-label="홈">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M3 10.5 12 3l9 7.5"></path>
                 <path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"></path>
             </svg>
         </a>
     </header>
+
     <div class="spacer" aria-hidden="true"></div>
+
     <nav class="menu" id="menu" aria-label="사이드 메뉴">
         <h2 class="menu-title">MENU</h2>
         <div class="divider"></div>
+
         <h3 class="section-title">Unity Projects</h3>
         <ul class="submenu" role="list">
             <li><a href="unity/personal/#">Personal │ -</a></li>
             <li><a href="unity/team/#">Team │ -</a></li>
         </ul>
+
         <div class="divider"></div>
+
         <h3 class="section-title">DirectX Projects</h3>
         <ul class="submenu" role="list">
             <li><a href="directx/personal/#">Personal │ -</a></li>
             <li><a href="directx/team/wizard_of_legend">Team │ Wizard of Legend 모작</a></li>
             <li><a href="directx/team/tales_of_arise">Team │ Tales of Arise 모작</a></li>
         </ul>
+
         <div class="divider"></div>
+
         <h3 class="section-title">Minecraft Projects</h3>
         <ul class="submenu" role="list">
             <li><a href="minecraft/mod/custom_displayname">MOD │ Custom DisplayName</a></li>
@@ -113,9 +175,22 @@
             <li><a href="minecraft/mod/help_request">MOD │ Help Request</a></li>
             <li><a href="minecraft/server/terrafirma_hardcore">SERVER │ Terrafirma Hardcore</a></li>
         </ul>
+
         <div class="divider"></div>
     </nav>
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()" tabindex="-1" aria-hidden="true"></div>
+
+    <main id="content">
+        <!-- 실제 본문 콘텐츠 -->
+        <section style="padding: 16px;">
+            <h1 style="margin: 0 0 12px;">Seongho's Portfolio</h1>
+            <p style="margin: 0;">
+                포트폴리오에 오신 것을 환영합니다. 좌측 상단 메뉴 버튼으로 프로젝트를 탐색하세요.
+            </p>
+        </section>
+    </main>
+
     <script>
         function toggleMenu() {
             const menu = document.getElementById('menu');
@@ -123,7 +198,21 @@
             const isOpen = menu.classList.toggle('open');
             overlay.classList.toggle('show', isOpen);
             document.body.style.overflow = isOpen ? 'hidden' : '';
+
+            // ARIA 상태 동기화
+            const btn = document.querySelector('button[aria-controls="menu"]');
+            if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+
+            // 열릴 때 메뉴 제목으로 포커스 이동(간단 포커스 관리)
+            if (isOpen) {
+                const title = menu.querySelector('.menu-title');
+                if (title) {
+                    title.setAttribute('tabindex', '-1');
+                    title.focus();
+                }
+            }
         }
+
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const menu = document.getElementById('menu');
@@ -132,6 +221,8 @@
                     menu.classList.remove('open');
                     overlay.classList.remove('show');
                     document.body.style.overflow = '';
+                    const btn = document.querySelector('button[aria-controls="menu"]');
+                    if (btn) btn.setAttribute('aria-expanded','false');
                 }
             }
         });
