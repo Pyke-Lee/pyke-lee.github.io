@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko">
+{% include head.html %}
+<body>
+  <a href="#content" class="visually-hidden-focusable">본문으로 건너뛰기</a>
+  {% include header.html %}
+
+  <div class="spacer" aria-hidden="true"></div>
+
+  {% include menu.html %}
+  <div class="overlay" id="overlay" onclick="toggleMenu()" tabindex="-1" aria-hidden="true"></div>
+
+  <main id="content">
+    {{ content }}
+  </main>
+
+  {% include scripts.html %}
+</body>
+</html>
