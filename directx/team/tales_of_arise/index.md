@@ -18,9 +18,6 @@ title: Tales of Arise 모작 (DirectX11)
   aspect-ratio: 16 / 9;
   display: block;
 }
-</style>
-
-<style>
 .content-wrap {
   width: 100%;
   max-width: 960px;
