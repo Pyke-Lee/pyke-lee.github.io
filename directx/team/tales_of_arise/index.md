@@ -20,10 +20,26 @@ title: Tales of Arise 모작 (DirectX11)
 }
 </style>
 
-<section style="padding:16px">
-  <h1 style="margin:0 0 12px;">Tales of Arise 모작 (DirectX11)</h1>
-  <p style="margin:0">
-  </p>
+<style>
+.content-wrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 16px auto;
+  padding: 16px;
+}
+.content-wrap h1 {
+  margin: 0 0 12px;
+  text-align: center;
+}
+.content-wrap p {
+  margin: 0;
+  text-align: center;
+}
+</style>
+
+<section style="content-wrap">
+  <h1>Tales of Arise 모작 (DirectX11)</h1>
+  <p></p>
 </section>
 
 <div class="video-wrap">
