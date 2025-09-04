@@ -18,6 +18,9 @@ title: Tales of Arise 모작 (DirectX11)
   aspect-ratio: 16 / 9;
   display: block;
 }
+</style>
+
+<style>
 .content-wrap {
   width: 100%;
   max-width: 960px;
@@ -34,7 +37,7 @@ title: Tales of Arise 모작 (DirectX11)
 }
 </style>
 
-<section style="content-wrap">
+<section class="content-wrap">
   <h1>Tales of Arise 모작 (DirectX11)</h1>
   <p></p>
 </section>
