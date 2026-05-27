@@ -58,19 +58,19 @@ return pObj;
 <pre markdown="0"><code class="language-cpp">#pragma once
 #include "Entity.h"
 
-#define DEFAULT_PLAYER_HP             100
-#define DEFAULT_PLAYER_FOOD           100
-#define DEFAULT_PLAYER_DASH_COUNT     3
-#define DEFAULT_PLAYER_MOVE_SPEED     6.f
-#define DEFAULT_PLAYER_PICKUP_RADIUS  150.f
-#define DASH_REGEN_TIME               1500
+#define DEFAULT_PLAYER_HP			100
+#define DEFAULT_PLAYER_FOOD			100
+#define DEFAULT_PLAYER_DASH_COUNT	3
+#define DEFAULT_PLAYER_MOVE_SPEED	6.f
+#define DEFAULT_PLAYER_PICKUP_RADIUS	150.f
+#define DASH_REGEN_TIME				1500
 
-#define ABILITY_WRATH     2
-#define ABILITY_PATIENCE  1
-#define ABILITY_MYSTIC    1
-#define ABILITY_GREED     2
-#define ABILITY_FOCUS     2
-#define ABILITY_MAX       20
+#define ABILITY_WRATH		2
+#define ABILITY_PATIENCE	1
+#define ABILITY_MYSTIC		1
+#define ABILITY_GREED		2
+#define ABILITY_FOCUS		2
+#define ABILITY_MAX			20
 
 class CPlayer : public CEntity {
 public:
@@ -78,15 +78,15 @@ enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
 enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
 
 public:
-virtual void  Initialize()           override;
-virtual int   Update()               override;
-virtual void  Late_Update()          override;
-virtual void  Render(HDC hDC)        override;
-virtual void  Release()              override;
+virtual void  Initialize()		   override;
+virtual int   Update()			   override;
+virtual void  Late_Update()		   override;
+virtual void  Render(HDC hDC)	   override;
+virtual void  Release()			   override;
 virtual bool  Take_Damage(int _iDmg) final override;
 
 public:
-int   Get_Pow()     { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
+int   Get_Pow()	    { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
 int   Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
 
 private:
@@ -104,25 +104,25 @@ bool   m_bJump = false;
 bool   m_bDash = false;
 bool   m_bDoubleJump = false;
 
-    int    m_iMaxDash = 3;
-    int    m_iDashCount = 3;
-    int    m_iMoney = 0;
+	int    m_iMaxDash = 3;
+	int    m_iDashCount = 3;
+	int    m_iMoney = 0;
 
-    STATE  m_ePrevState = END;
-    STATE  m_eCurState = IDLE;
+	STATE  m_ePrevState = END;
+	STATE  m_eCurState = IDLE;
 
-    CObj* m_pMainHand = nullptr;
-    CObj* m_pSubHand = nullptr;
+	CObj*  m_pMainHand = nullptr;
+	CObj*  m_pSubHand = nullptr;
 
-    int    m_iPow = 0;
-    int    m_iDefence = 0;
-    int    m_iCritical = 0;
-    int    m_iCriticalDmg = 50;
-    int    m_iWrath = 0;
-    int    m_iPatience = 0;
-    int    m_iMystic = 0;
-    int    m_iGreed = 0;
-    int    m_iFocus = 0;
+	int    m_iPow = 0;
+	int    m_iDefence = 0;
+	int    m_iCritical = 0;
+	int    m_iCriticalDmg = 50;
+	int    m_iWrath = 0;
+	int    m_iPatience = 0;
+	int    m_iMystic = 0;
+	int    m_iGreed = 0;
+	int    m_iFocus = 0;
 };</code></pre>
 </details>
 
@@ -142,21 +142,21 @@ public:
 enum TYPE { ONE, TWO, GUN, END };
 
 public:
-virtual void Initialize()    PURE;
-virtual int  Update()        PURE;
-virtual void Late_Update()   PURE;
-virtual void Render(HDC hDC) PURE;
-virtual void Release()       PURE;
-virtual void PickUp()        PURE;
+virtual void Initialize()	PURE;
+virtual int  Update()		PURE;
+virtual void Late_Update()	PURE;
+virtual void Render(HDC hDC)	PURE;
+virtual void Release()		PURE;
+virtual void PickUp()		PURE;
 
 public:
 void  Rotate();
 
-    TYPE  Get_WeaponType() { return m_eWeaponType; }
-    bool  Get_Equip()      { return m_bEquip; }
+	TYPE  Get_WeaponType() { return m_eWeaponType; }
+	bool  Get_Equip()	    { return m_bEquip; }
 
 protected:
-POINT m_tPoint[3] { {0,0}, {0,0}, {0,0} };  // PlgBlt 회전 좌표
+POINT m_tPoint[3] { {0,0}, {0,0}, {0,0} };
 bool  m_bEquip = false;
 TYPE  m_eWeaponType = END;
 int   m_iPrice = 0;
@@ -168,25 +168,24 @@ TCHAR m_pName[256] = L"";
 <details class="code-block">
 <summary>Colt_Bullet.cpp — Render <span class="file-badge">PlgBlt 회전 렌더링</span></summary>
 <pre markdown="0"><code class="language-cpp">void CColt_Bullet::Render(HDC hDC) {
-    int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
-    int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
+	int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
+	int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
 
-    HDC hPlgDC   = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Base");
-    HDC hResetDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Reset");
+	HDC hPlgDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Base");
+	HDC hResetDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Reset");
 
-    if (m_eCurState == IDLE) {
-        HDC hMemDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Colt_Bullet");
-
-        // PlgBlt로 회전된 이미지를 임시 DC에 그린 뒤 TransparentBlt로 출력
-        PlgBlt(hPlgDC, m_tPoint, hMemDC, 0, 0, 30, 30, NULL, NULL, NULL);
-        GdiTransparentBlt(hDC,
-            (int)(m_tInfo.fX - (m_tInfo.fCX * 0.5f) + iScrollX),
-            (int)(m_tInfo.fY - (m_tInfo.fCY * 0.5f) + iScrollY),
-            30, 30, hPlgDC, 0, 0, 30, 30, RGB(255, 0, 255));
-
-        // 임시 DC 초기화 (다음 프레임용)
-        BitBlt(hPlgDC, 0, 0, 30, 30, hResetDC, 0, 0, SRCCOPY);
-    }
+	if (m_eCurState == IDLE) {
+		HDC hMemDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Colt_Bullet");
+		PlgBlt(hPlgDC, m_tPoint, hMemDC, 0, 0, 30, 30, NULL, NULL, NULL);
+		GdiTransparentBlt(hDC, (int)(m_tInfo.fX - (m_tInfo.fCX * 0.5f) + iScrollX), (int)(m_tInfo.fY - (m_tInfo.fCY * 0.5f) + iScrollY), 30, 30, hPlgDC, 0, 0, 30, 30, RGB(255, 0, 255));
+		BitBlt(hPlgDC, 0, 0, 30, 30, hResetDC, 0, 0, SRCCOPY);
+	}
+	else {
+		HDC hMemDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Effect_Bullet");
+		PlgBlt(hPlgDC, m_tPoint, hMemDC, (int)(m_tFrame.iFrameStart * 30), 0, 30, 30, NULL, NULL, NULL);
+		GdiTransparentBlt(hDC, (int)(m_tInfo.fX - (m_tInfo.fCX * 0.5f) + iScrollX), (int)(m_tInfo.fY - (m_tInfo.fCY * 0.5f) + iScrollY), 30, 30, hPlgDC, 0, 0, 30, 30, RGB(255, 0, 255));
+		BitBlt(hPlgDC, 0, 0, 30, 30, hResetDC, 0, 0, SRCCOPY);
+	}
 }</code></pre>
 </details>
 
@@ -199,67 +198,54 @@ TCHAR m_pName[256] = L"";
 <details class="code-block">
 <summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 좌표 계산</span></summary>
 <pre markdown="0"><code class="language-cpp">void CBelial_Sword::Rotate() {
-    if (!m_bFire) {
-        POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
-        POINT ptPlayer {
-            (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fX,
-            (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fY
-        };
-        m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptPlayer, ptBullet);
+	if (!m_bFire) {
+		POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
+		POINT ptPlayer { (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fX, (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fY };
+		m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptPlayer, ptBullet);
 
-        float _fAngle = -m_fAngle - 90.f;
-        float fDiagonal = sqrtf(
-            powf((m_tInfo.fCX * 0.5f), 2) +
-            powf((m_tInfo.fCY * 0.5f), 2)
-        );
+		float _fAngle = -m_fAngle - 90.f;
 
-        // 삼각함수로 PlgBlt용 세 꼭짓점(POINT[3]) 직접 계산
-        m_tPoint[0].x = LONG((m_tInfo.fCX * 0.5f)
-            + (fDiagonal * cosf((_fAngle + 225.f) * (PI / 180.f))));
-        m_tPoint[0].y = LONG((m_tInfo.fCY * 0.5f)
-            + (fDiagonal * sinf((_fAngle + 225.f) * (PI / 180.f))));
+		float fDiagonal = sqrtf(powf((m_tInfo.fCX * 0.5f), 2) + powf((m_tInfo.fCY * 0.5f), 2));
 
-        m_tPoint[1].x = LONG((m_tInfo.fCX * 0.5f)
-            + (fDiagonal * cosf((_fAngle + 315.f) * (PI / 180.f))));
-        m_tPoint[1].y = LONG((m_tInfo.fCY * 0.5f)
-            + (fDiagonal * sinf((_fAngle + 315.f) * (PI / 180.f))));
+		m_tPoint[0].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 225.f) * (PI / 180.f))));
+		m_tPoint[0].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 225.f) * (PI / 180.f))));
 
-        m_tPoint[2].x = LONG((m_tInfo.fCX * 0.5f)
-            + (fDiagonal * cosf((_fAngle + 135.f) * (PI / 180.f))));
-        m_tPoint[2].y = LONG((m_tInfo.fCY * 0.5f)
-            + (fDiagonal * sinf((_fAngle + 135.f) * (PI / 180.f))));
-    }
+		m_tPoint[1].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 315.f) * (PI / 180.f))));
+		m_tPoint[1].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 315.f) * (PI / 180.f))));
+
+		m_tPoint[2].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 135.f) * (PI / 180.f))));
+		m_tPoint[2].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 135.f) * (PI / 180.f))));
+	}
 }</code></pre>
 </details>
 
 <details class="code-block">
 <summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 나선 탄막</span></summary>
 <pre markdown="0"><code class="language-cpp">void CBoss_Belial::Create_Bullet() {
-    CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
+	CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
 
-    if (m_bRight) { m_fAngle += 5.f; }
-    else          { m_fAngle -= 5.f; }
+	if (m_bRight) { m_fAngle += 5.f; }
+	else { m_fAngle -= 5.f; }
 
-    // 90도 간격 4발 동시 발사 — 매 호출마다 5도씩 회전하며 나선형 탄막 생성
-    CObj* pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
-    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-    pBullet-&gt;Set_Angle(m_fAngle);
-    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+	CObj* pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+	pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+	pBullet-&gt;Set_Angle(m_fAngle);
+	CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
-    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-    pBullet-&gt;Set_Angle((m_fAngle + 90.f));
-    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+	pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+	pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+	pBullet-&gt;Set_Angle((m_fAngle + 90.f));
+	CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
-    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-    pBullet-&gt;Set_Angle((m_fAngle + 180.f));
-    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+	pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+	pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+	pBullet-&gt;Set_Angle((m_fAngle + 180.f));
+	CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
-    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-    pBullet-&gt;Set_Angle((m_fAngle + 270.f));
-    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+	pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+	pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+	pBullet-&gt;Set_Angle((m_fAngle + 270.f));
+	CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 }</code></pre>
 </details>
 
@@ -272,46 +258,35 @@ Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 �
 <details class="code-block">
 <summary>StageMgr.cpp — Set_Stage <span class="file-badge">스테이지 전환 및 상태 보존</span></summary>
 <pre markdown="0"><code class="language-cpp">void CStageMgr::Set_Stage(STAGEID eID) {
-    m_eCurStage = eID;
+	m_eCurStage = eID;
 
-    if (m_ePrevStage != m_eCurStage) {
-        CSoundMgr::Get_Instance()-&gt;StopAll();
+	if (m_ePrevStage != m_eCurStage) {
+		CSoundMgr::Get_Instance()-&gt;StopAll();
 
-        // 현재 스테이지의 오브젝트를 스테이지 자체 리스트로 회수 (상태 보존)
-        if (!(CObjMgr::Get_Instance()-&gt;Get_GateList()-&gt;empty()))
-            m_pStage-&gt;Get_GateList()-&gt;splice(
-                m_pStage-&gt;Get_GateList()-&gt;end(),
-                *CObjMgr::Get_Instance()-&gt;Get_GateList());
+		if (!(CObjMgr::Get_Instance()-&gt;Get_GateList()-&gt;empty())) {m_pStage-&gt;Get_GateList()-&gt;splice((m_pStage-&gt;Get_GateList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_GateList())); }
+		if (!(CObjMgr::Get_Instance()-&gt;Get_MonsterList()-&gt;empty())) { m_pStage-&gt;Get_MonsterList()-&gt;splice((m_pStage-&gt;Get_MonsterList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_MonsterList())); }
 
-        if (!(CObjMgr::Get_Instance()-&gt;Get_MonsterList()-&gt;empty()))
-            m_pStage-&gt;Get_MonsterList()-&gt;splice(
-                m_pStage-&gt;Get_MonsterList()-&gt;end(),
-                *CObjMgr::Get_Instance()-&gt;Get_MonsterList());
+		CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_BULLET);
+		CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
+		CTileMgr::Get_Instance()-&gt;Release();
 
-        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_BULLET);
-        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
-        CTileMgr::Get_Instance()-&gt;Release();
+		if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS)
+			|| m_eCurStage == ST_TOWN) {
+			std::for_each(m_vecDungeon.begin(), m_vecDungeon.end(), Safe_Delete&lt;CStage*&gt;);
+		}
 
-        // 보스 클리어 후 마을 복귀 시 던전 전체 초기화
-        if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS)
-            || m_eCurStage == ST_TOWN) {
-            std::for_each(m_vecDungeon.begin(),
-                          m_vecDungeon.end(), Safe_Delete&lt;CStage*&gt;);
-        }
+		switch (m_eCurStage) {
+		case ST_TOWN:	m_pStage = new CTown;	break;
+		case ST_DF0:
+			if (!m_vecDungeon[0]) m_vecDungeon[0] = new CDungeon_F0;
+			m_pStage = m_vecDungeon[0];
+			break;
+		case ST_BOSS:	m_pStage = new CBoss;	break;
+		}
 
-        switch (m_eCurStage) {
-        case ST_TOWN:  m_pStage = new CTown;  break;
-        case ST_DF0:
-            if (!m_vecDungeon[0]) m_vecDungeon[0] = new CDungeon_F0;
-            m_pStage = m_vecDungeon[0];
-            break;
-        // ... DF1~DF4 동일 패턴
-        case ST_BOSS:  m_pStage = new CBoss;  break;
-        }
-
-        m_pStage-&gt;Initialize();
-        m_ePrevStage = m_eCurStage;
-    }
+		m_pStage-&gt;Initialize();
+		m_ePrevStage = m_eCurStage;
+	}
 }</code></pre>
 </details>
 
@@ -320,71 +295,30 @@ Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 �
 Edit 씬에서 타일을 배치·삭제할 수 있는 자체 맵 에디터를 구현했습니다.
 배경 타일(BackTile)과 충돌 타일(FrontTile)을 분리하여 관리하며, 파일 저장·로드를 통해 각 스테이지의 맵 데이터를 관리합니다.
 
-<details class="code-block">
-<summary>TileMgr.cpp — Render <span class="file-badge">뷰포트 컬링 렌더링</span></summary>
-<pre markdown="0"><code class="language-cpp">void CTileMgr::Render(HDC hDC) {
-    int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
-    int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
-
-    // 현재 화면에 보이는 타일 범위만 계산
-    int iCullX = abs(iScrollX / TILE_CX);
-    int iCullY = abs(iScrollY / TILE_CY);
-    int iMaxX  = iCullX + (WINCX / TILE_CX) + 2;
-    int iMaxY  = iCullY + (WINCY / TILE_CY) + 2;
-
-    int iTileX = CStageMgr::Get_Instance()
-        -&gt;Get_Stage()-&gt;Get_StageSizeX() / 64;
-
-    // 컬링 범위 내 타일만 렌더
-    for (int i = iCullY; i &lt; iMaxY; ++i) {
-        for (int j = iCullX; j &lt; iMaxX; ++j) {
-            int iIndex = i * iTileX + j;
-            if (0 &gt; iIndex || (size_t)iIndex &gt;= m_vecBackTile.size())
-                continue;
-            m_vecBackTile[iIndex]-&gt;Render(hDC);
-        }
-    }
-
-    // 충돌 타일은 화면 범위 체크 후 렌더
-    for (auto&amp; pTile : m_vecFrontTile) {
-        if (pTile-&gt;Get_Info().fX + iScrollX &gt;= -64
-            &amp;&amp; pTile-&gt;Get_Info().fX + iScrollX &lt;= WINCX + 64
-            &amp;&amp; pTile-&gt;Get_Info().fY + iScrollY &gt;= -64
-            &amp;&amp; pTile-&gt;Get_Info().fY + iScrollY &lt;= WINCY + 64) {
-            pTile-&gt;Render(hDC);
-        }
-    }
-}</code></pre>
-</details>
-
 ### 아이템 및 경제
 
 코인은 몬스터 처치 시 포물선 드롭 연출 후 바닥에 착지하며, 플레이어가 일정 반경(150px) 내에 접근하면 삼각함수 기반 호밍으로 자동 흡수됩니다.
 인벤토리 슬롯 시스템으로 무기를 장착·교체할 수 있고, 상점(Shop)과 식당(Restaurant), 보물상자(TreasureChest) 시스템을 구현했습니다.
 
 <details class="code-block">
-<summary>Item.cpp <span class="file-badge">아이템 드롭 & 호밍 흡수</span></summary>
+<summary>Item.cpp — DropItem <span class="file-badge">아이템 드롭 & 호밍 흡수</span></summary>
 <pre markdown="0"><code class="language-cpp">void CItem::DropItem() {
-    if (m_bSpawn) {
-        // 포물선 드롭 연출
-        float fJumpPower = m_fPower * m_fTime
-                         - GRAVITY * powf(m_fTime, 2) * 0.5f;
-        if (fJumpPower &lt; -16.f) { fJumpPower = -16.f; }
-        m_tInfo.fY -= fJumpPower;
-        m_fTime += 0.2f;
-    }
-    else if (!m_bSpawn &amp;&amp; !m_bPickUp) {
-        // 중력 낙하
-        m_fFallSpeed += m_fSpeed;
-        if (m_fFallSpeed &gt; 16.f) { m_fFallSpeed = 16.f; }
-        m_tInfo.fY += m_fFallSpeed;
-    }
-    else if (!m_bSpawn &amp;&amp; m_bPickUp &amp;&amp; m_eItemType == ITEM_MONEY) {
-        // 코인: 플레이어를 향해 호밍 이동
-        Find_Target();
-        m_tInfo.fX += m_fSpeed * cosf(m_fAngle * (PI / 180.f));
-        m_tInfo.fY -= m_fSpeed * sinf(m_fAngle * (PI / 180.f));
-    }
+	if (m_bSpawn) {
+		float fJumpPower = m_fPower * m_fTime - GRAVITY * powf(m_fTime, 2) * 0.5f;
+		if (fJumpPower &lt; -16.f) { fJumpPower = -16.f; }
+		m_tInfo.fY -= fJumpPower;
+		m_fTime += 0.2f;
+	}
+	else if (!m_bSpawn &amp;&amp; !m_bPickUp) {
+		m_fFallSpeed += m_fSpeed;
+		if (m_fFallSpeed &gt; 16.f) { m_fFallSpeed = 16.f; }
+		m_tInfo.fY += m_fFallSpeed;
+	}
+	else if (!m_bSpawn &amp;&amp; m_bPickUp &amp;&amp; m_eItemType == ITEM_MONEY) {
+		Find_Target();
+		m_tInfo.fX += m_fSpeed * cosf(m_fAngle * (PI / 180.f));
+		m_tInfo.fY -= m_fSpeed * sinf(m_fAngle * (PI / 180.f));
+	}
 }
 
 void CItem::Find_Target() {

@@ -13,8 +13,8 @@
   --side-pad: 12px;
   --menu-width: 380px;
   --divider: rgba(0,0,0,.12);
-  --code-bg: #2a2520;
-  --code-text: #d4cfc6;
+  --code-bg: #eae6d8;
+  --code-text: #4c4f69;
   --tag-bg: rgba(0,0,0,.05);
   --tag-border: rgba(0,0,0,.1);
 }
@@ -243,18 +243,18 @@ body {
   color: var(--ink-faint);
 }
 
-/* 인라인 코드 — Notion 스타일 */
+/* 인라인 코드 */
 .project-body code {
-  font-family: 'SFMono-Regular', 'Consolas', 'Menlo', monospace;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', 'Consolas', monospace;
   font-size: 0.88em;
-  background: rgba(135,131,120,.15);
-  color: #c7254e;
+  background: rgba(0,0,0,.06);
+  color: #8b5c2a;
   padding: 2px 5px;
   border-radius: 3px;
 }
 
 /* ══════════════════════════════════════════════
-   코드 토글 블록 — Notion Toggle + 다크 코드
+   코드 토글 블록
    ══════════════════════════════════════════════ */
 
 .code-block {
