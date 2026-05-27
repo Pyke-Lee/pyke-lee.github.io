@@ -94,5 +94,35 @@ body {
 .submenu a::before { content: "└ "; position: absolute; left: 0; top: 6px; }
 .submenu a:hover { background: var(--hover); }
 
-/* 현재 페이지 강조(선택) */
+/* 현재 페이지 강조 */
 .submenu a.active { font-weight: 700; background: var(--hover); }
+
+/* Video */
+.video-wrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 16px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+.video-wrap iframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  display: block;
+}
+.content-wrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 16px auto;
+  padding: 16px;
+}
+.content-wrap h1 {
+  margin: 0 0 12px;
+  text-align: center;
+}
+.content-wrap p {
+  margin: 0;
+  text-align: center;
+}
