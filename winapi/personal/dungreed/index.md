@@ -13,7 +13,7 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 ## 프로젝트 개요
 
 자주 즐기던 로그라이크 액션 게임 Dungreed를 WinAPI로 모작한 개인 프로젝트입니다.
-엔진이나 외부 그래픽 라이브러리 없이 C++과 WinAPI(GDI)만으로 게임의 핵심 시스템을 구현하는 것을 목표로 했습니다.
+엔진이나 외부 그래픽 라이브러리 없이 **C++과 WinAPI(GDI)만으로** 게임의 핵심 시스템을 구현하는 것을 목표로 했습니다.
 
 ## 아키텍처
 
@@ -30,6 +30,22 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 
 오브젝트 생성에는 Abstract Factory 패턴을 사용하고, 게임 루프는 `GetTickCount64` 기반 10ms 고정 타임스텝으로 동작합니다.
 
+<details class="code-block">
+<summary>AbstractFactory.h <span class="file-badge">템플릿 팩토리</span></summary>
+<pre><code>#pragma once
+#include "Obj.h"
+
+template&lt;typename T&gt;
+class CAbstractFactory {
+public:
+static CObj* Create() {
+CObj* pObj = new T;
+pObj-&gt;Initialize();
+return pObj;
+}
+};</code></pre>
+</details>
+
 ## 주요 구현 내용
 
 ### 플레이어 시스템
@@ -37,48 +53,363 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 - 능력치 시스템: 분노(공격력)·인내(방어력)·신비·탐욕·집중 5종 스탯 강화
 - 마우스 기준 좌우 반전 및 무기 조준
 
+<details class="code-block">
+<summary>Player.h <span class="file-badge">플레이어 클래스 구조</span></summary>
+<pre><code>#pragma once
+#include "Entity.h"
+
+#define DEFAULT_PLAYER_HP             100
+#define DEFAULT_PLAYER_FOOD           100
+#define DEFAULT_PLAYER_DASH_COUNT     3
+#define DEFAULT_PLAYER_MOVE_SPEED     6.f
+#define DEFAULT_PLAYER_PICKUP_RADIUS  150.f
+#define DASH_REGEN_TIME               1500
+
+#define ABILITY_WRATH     2
+#define ABILITY_PATIENCE  1
+#define ABILITY_MYSTIC    1
+#define ABILITY_GREED     2
+#define ABILITY_FOCUS     2
+#define ABILITY_MAX       20
+
+class CPlayer : public CEntity {
+public:
+enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
+enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
+
+public:
+virtual void  Initialize()           override;
+virtual int   Update()               override;
+virtual void  Late_Update()          override;
+virtual void  Render(HDC hDC)        override;
+virtual void  Release()              override;
+virtual bool  Take_Damage(int _iDmg) final override;
+
+public:
+int   Get_Pow()    { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
+int   Get_Defence(){ return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
+
+private:
+void  Get_Key();
+void  Jumping();
+void  Dash();
+void  Chasing_Mouse();
+void  Motion_Change();
+void  Find_Item_Radius();
+void  Attack();
+void  Update_HandPos();
+
+private:
+bool   m_bJump = false;
+bool   m_bDash = false;
+bool   m_bDoubleJump = false;
+
+    int    m_iMaxDash = 3;
+    int    m_iDashCount = 3;
+    int    m_iMoney = 0;
+    int    m_iMaxFood = 0;
+    int    m_iCurFood = 0;
+
+    STATE  m_ePrevState = END;
+    STATE  m_eCurState = IDLE;
+
+    CObj*  m_pMainHand = nullptr;
+    CObj*  m_pSubHand = nullptr;
+
+    // 능력치
+    int    m_iPow = 0;
+    int    m_iDefence = 0;
+    int    m_iCritical = 0;
+    int    m_iCriticalDmg = 50;
+    int    m_iWrath = 0;
+    int    m_iPatience = 0;
+    int    m_iMystic = 0;
+    int    m_iGreed = 0;
+    int    m_iFocus = 0;
+};</code></pre>
+</details>
+
 ### 전투 및 무기
 - 무기 타입 분류: 한손검(Gladius), 양손검(GreatSword), 방패(RoundShield), 총기(Colt)
 - 한손/양손/원거리 무기별 공격 패턴과 딜레이 차별화
-- PlgBlt 기반 무기 회전 렌더링 — 삼각함수로 POINT[3] 좌표를 계산하여 GDI만으로 이미지 회전 구현
-- 투사체 시스템: 무기·몬스터별 독립된 Bullet 클래스 (Colt_Bullet, Banshee_Bullet, Belial_Bullet 등)
+- `PlgBlt` 기반 무기 회전 렌더링 — 삼각함수로 `POINT[3]` 좌표를 계산하여 GDI만으로 이미지 회전 구현
+- 투사체 시스템: 무기·몬스터별 독립된 Bullet 클래스
+
+<details class="code-block">
+<summary>Weapon.h <span class="file-badge">무기 기반 클래스</span></summary>
+<pre><code>#pragma once
+#include "Item.h"
+
+class CWeapon : public CItem {
+public:
+enum TYPE { ONE, TWO, GUN, END };
+
+public:
+virtual void Initialize()    PURE;
+virtual int  Update()        PURE;
+virtual void Late_Update()   PURE;
+virtual void Render(HDC hDC) PURE;
+virtual void Release()       PURE;
+virtual void PickUp()        PURE;
+
+public:
+void  Rotate();
+
+    TYPE  Get_WeaponType() { return m_eWeaponType; }
+    bool  Get_Equip()      { return m_bEquip; }
+    int   Get_Price()      { return m_iPrice; }
+
+protected:
+POINT m_tPoint[3] { {0,0}, {0,0}, {0,0} };  // PlgBlt 회전 좌표
+bool  m_bEquip = false;
+TYPE  m_eWeaponType = END;
+int   m_iPrice = 0;
+DWORD m_dwDelayTime = 0;
+TCHAR m_pName[256] = L"";
+};</code></pre>
+</details>
+
+<details class="code-block">
+<summary>Colt_Bullet.cpp — Render <span class="file-badge">PlgBlt 회전 렌더링 예시</span></summary>
+<pre><code>void CColt_Bullet::Render(HDC hDC) {
+    int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
+    int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
+
+    HDC hPlgDC   = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Base");
+    HDC hResetDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Reset");
+
+    if (m_eCurState == IDLE) {
+        HDC hMemDC = CBmpMgr::Get_Instance()-&gt;Find_Img(L"Colt_Bullet");
+
+        // PlgBlt로 회전된 이미지를 임시 DC에 그린 뒤 TransparentBlt로 출력
+        PlgBlt(hPlgDC, m_tPoint, hMemDC, 0, 0, 30, 30, NULL, NULL, NULL);
+        GdiTransparentBlt(hDC,
+            (int)(m_tInfo.fX - (m_tInfo.fCX * 0.5f) + iScrollX),
+            (int)(m_tInfo.fY - (m_tInfo.fCY * 0.5f) + iScrollY),
+            30, 30, hPlgDC, 0, 0, 30, 30, RGB(255, 0, 255));
+
+        // 임시 DC 초기화 (다음 프레임용)
+        BitBlt(hPlgDC, 0, 0, 30, 30, hResetDC, 0, 0, SRCCOPY);
+    }
+}</code></pre>
+</details>
 
 ### 몬스터 및 보스
 - 일반 몬스터 4종: Banshee(원거리), RedGiantBat(원거리), Minotaur(근거리), GiantSkeleton(근거리)
 - 자체 중력·낙하 시스템, 타일 충돌 기반 착지 판정
 - 보스 Belial: 다관절 구조(Hand 분리), 검 소환(Belial_Sword), 탄막(Belial_Bullet) 등 복합 패턴
 
+<details class="code-block">
+<summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 로직</span></summary>
+<pre><code>void CBelial_Sword::Rotate() {
+    if (!m_bFire) {
+        // 플레이어 방향으로 각도 계산
+        POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
+        POINT ptPlayer {
+            (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fX,
+            (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fY
+        };
+        m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptPlayer, ptBullet);
+
+        float _fAngle = -m_fAngle - 90.f;
+        float fDiagonal = sqrtf(
+            powf((m_tInfo.fCX * 0.5f), 2) +
+            powf((m_tInfo.fCY * 0.5f), 2)
+        );
+
+        // 삼각함수로 PlgBlt용 세 꼭짓점(POINT[3]) 직접 계산
+        m_tPoint[0].x = LONG((m_tInfo.fCX * 0.5f)
+            + (fDiagonal * cosf((_fAngle + 225.f) * (PI / 180.f))));
+        m_tPoint[0].y = LONG((m_tInfo.fCY * 0.5f)
+            + (fDiagonal * sinf((_fAngle + 225.f) * (PI / 180.f))));
+
+        m_tPoint[1].x = LONG((m_tInfo.fCX * 0.5f)
+            + (fDiagonal * cosf((_fAngle + 315.f) * (PI / 180.f))));
+        m_tPoint[1].y = LONG((m_tInfo.fCY * 0.5f)
+            + (fDiagonal * sinf((_fAngle + 315.f) * (PI / 180.f))));
+
+        m_tPoint[2].x = LONG((m_tInfo.fCX * 0.5f)
+            + (fDiagonal * cosf((_fAngle + 135.f) * (PI / 180.f))));
+        m_tPoint[2].y = LONG((m_tInfo.fCY * 0.5f)
+            + (fDiagonal * sinf((_fAngle + 135.f) * (PI / 180.f))));
+    }
+}</code></pre>
+</details>
+
+<details class="code-block">
+<summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 회전 탄막 생성</span></summary>
+<pre><code>void CBoss_Belial::Create_Bullet() {
+    CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
+
+    if (m_bRight) { m_fAngle += 5.f; }
+    else          { m_fAngle -= 5.f; }
+
+    // 90도 간격 4발 동시 발사 — 매 호출마다 5도씩 회전하며 나선형 탄막 생성
+    CObj* pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle(m_fAngle);
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 90.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 180.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 270.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
+}</code></pre>
+</details>
+
 ### 던전 및 스테이지
 - Town → Dungeon 5층(F0~F4) → Boss 순서의 스테이지 진행 구조
 - StageMgr가 각 층 인스턴스를 vector로 관리하며 전진·후퇴 시 상태 보존
 - Gate 오브젝트를 통한 층간 이동, 몬스터 전멸 시 다음 층 개방
+
+<details class="code-block">
+<summary>StageMgr.cpp — Set_Stage <span class="file-badge">스테이지 전환 및 상태 보존</span></summary>
+<pre><code>void CStageMgr::Set_Stage(STAGEID eID) {
+    m_eCurStage = eID;
+
+    if (m_ePrevStage != m_eCurStage) {
+        CSoundMgr::Get_Instance()-&gt;StopAll();
+
+        // 현재 스테이지의 오브젝트를 스테이지 자체 리스트로 회수 (상태 보존)
+        if (!(CObjMgr::Get_Instance()-&gt;Get_GateList()-&gt;empty()))
+            m_pStage-&gt;Get_GateList()-&gt;splice(
+                m_pStage-&gt;Get_GateList()-&gt;end(),
+                *CObjMgr::Get_Instance()-&gt;Get_GateList());
+
+        if (!(CObjMgr::Get_Instance()-&gt;Get_MonsterList()-&gt;empty()))
+            m_pStage-&gt;Get_MonsterList()-&gt;splice(
+                m_pStage-&gt;Get_MonsterList()-&gt;end(),
+                *CObjMgr::Get_Instance()-&gt;Get_MonsterList());
+
+        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_BULLET);
+        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
+        CTileMgr::Get_Instance()-&gt;Release();
+
+        // 보스 클리어 후 마을 복귀 시 던전 초기화
+        if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS)
+            || m_eCurStage == ST_TOWN) {
+            std::for_each(m_vecDungeon.begin(),
+                          m_vecDungeon.end(), Safe_Delete&lt;CStage*&gt;);
+        }
+
+        switch (m_eCurStage) {
+        case ST_TOWN:  m_pStage = new CTown;  break;
+        case ST_DF0:
+            if (!m_vecDungeon[0]) m_vecDungeon[0] = new CDungeon_F0;
+            m_pStage = m_vecDungeon[0];
+            break;
+        // ... DF1~DF4 동일 패턴
+        case ST_BOSS:  m_pStage = new CBoss;  break;
+        }
+
+        m_pStage-&gt;Initialize();
+        m_ePrevStage = m_eCurStage;
+    }
+}</code></pre>
+</details>
 
 ### 타일 에디터
 - Edit 씬에서 타일 배치·삭제 가능한 자체 맵 에디터
 - 배경 타일과 충돌 타일을 분리(BackTile / FrontTile)하여 관리
 - 파일 저장·로드를 통해 각 스테이지 맵 데이터 관리
 
+<details class="code-block">
+<summary>TileMgr.cpp — Render <span class="file-badge">뷰포트 컬링 렌더링</span></summary>
+<pre><code>void CTileMgr::Render(HDC hDC) {
+    int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
+    int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
+
+    // 현재 화면에 보이는 타일 범위만 계산
+    int iCullX = abs(iScrollX / TILE_CX);
+    int iCullY = abs(iScrollY / TILE_CY);
+    int iMaxX  = iCullX + (WINCX / TILE_CX) + 2;
+    int iMaxY  = iCullY + (WINCY / TILE_CY) + 2;
+
+    int iTileX = CStageMgr::Get_Instance()
+        -&gt;Get_Stage()-&gt;Get_StageSizeX() / 64;
+
+    // 컬링 범위 내 타일만 렌더
+    for (int i = iCullY; i &lt; iMaxY; ++i) {
+        for (int j = iCullX; j &lt; iMaxX; ++j) {
+            int iIndex = i * iTileX + j;
+            if (0 &gt; iIndex || (size_t)iIndex &gt;= m_vecBackTile.size())
+                continue;
+            m_vecBackTile[iIndex]-&gt;Render(hDC);
+        }
+    }
+
+    // 충돌 타일 (화면 범위 체크 후 렌더)
+    for (auto&amp; pTile : m_vecFrontTile) {
+        if (pTile-&gt;Get_Info().fX + iScrollX &gt;= -64
+            &amp;&amp; pTile-&gt;Get_Info().fX + iScrollX &lt;= WINCX + 64
+            &amp;&amp; pTile-&gt;Get_Info().fY + iScrollY &gt;= -64
+            &amp;&amp; pTile-&gt;Get_Info().fY + iScrollY &lt;= WINCY + 64) {
+            pTile-&gt;Render(hDC);
+        }
+    }
+}</code></pre>
+</details>
+
 ### 아이템 및 경제
 - 코인 드롭 → 플레이어 주변 자동 흡수 (Pickup Radius 150px, 호밍 이동)
 - 인벤토리 슬롯 시스템, 무기 장착·교체
-- 상점(Shop): NPC 상호작용으로 무기 구매·판매
-- 식당(Restaurant): 음식 구매를 통한 허기 회복·스탯 버프
-- 보물상자(TreasureChest) 보상
+- 상점(Shop) / 식당(Restaurant) / 보물상자(TreasureChest) 시스템
+
+<details class="code-block">
+<summary>Item.cpp <span class="file-badge">아이템 드롭 & 호밍 흡수</span></summary>
+<pre><code>void CItem::DropItem() {
+    if (m_bSpawn) {
+        // 포물선 드롭 연출
+        float fJumpPower = m_fPower * m_fTime
+                         - GRAVITY * powf(m_fTime, 2) * 0.5f;
+        if (fJumpPower &lt; -16.f) { fJumpPower = -16.f; }
+        m_tInfo.fY -= fJumpPower;
+        m_fTime += 0.2f;
+    }
+    else if (!m_bSpawn &amp;&amp; !m_bPickUp) {
+        // 중력 낙하
+        m_fFallSpeed += m_fSpeed;
+        if (m_fFallSpeed &gt; 16.f) { m_fFallSpeed = 16.f; }
+        m_tInfo.fY += m_fFallSpeed;
+    }
+    else if (!m_bSpawn &amp;&amp; m_bPickUp &amp;&amp; m_eItemType == ITEM_MONEY) {
+        // 코인: 플레이어를 향해 호밍 이동
+        Find_Target();
+        m_tInfo.fX += m_fSpeed * cosf(m_fAngle * (PI / 180.f));
+        m_tInfo.fY -= m_fSpeed * sinf(m_fAngle * (PI / 180.f));
+    }
+}
+
+void CItem::Find_Target() {
+POINT ptTarget{}, ptItem{};
+ptTarget.x = (long)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Info().fX;
+ptTarget.y = (long)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Info().fY;
+ptItem.x = (long)m_tInfo.fX;
+ptItem.y = (long)m_tInfo.fY;
+m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptTarget, ptItem);
+}</code></pre>
+</details>
 
 ### NPC 상호작용
 - 5종 NPC: Shopper, Giant, InnKeeper, Commander, Butler
 - RECT 교차 판정 기반 상호작용 범위 감지, 근접 시 대화·거래 UI 활성화
-
-### 렌더링 최적화
-- GDI 더블 버퍼링으로 화면 깜빡임 방지
-- 타일 렌더링에 뷰포트 기반 컬링 적용 — 화면 밖 타일은 렌더 생략
 
 ## GDI 이미지 회전과 성능 대응
 
 WinAPI의 GDI로 이미지를 회전시키려면 일반적으로 픽셀 단위 변환이 필요해 프레임 저하가 심합니다.
 GDI+를 전면 도입하면 해결할 수 있지만, 약 1개월의 한정된 개발 기간 안에 기존 GDI 기반 렌더링 파이프라인을 전부 전환하는 것은 비현실적이었습니다.
 
-이를 해결하기 위해 GDI+를 사용하지 않고 GDI의 `PlgBlt` 함수를 활용했습니다.
-`PlgBlt`는 원본 사각형을 대상 평행사변형에 매핑하는 함수로, 삼각함수로 회전 각도에 따른 세 꼭짓점 좌표(POINT[3])를 직접 계산하여 전달하면 GDI만으로 이미지 회전이 가능합니다.
+이를 해결하기 위해 **GDI+를 사용하지 않고** GDI의 `PlgBlt` 함수를 활용했습니다.
+`PlgBlt`는 원본 사각형을 대상 평행사변형에 매핑하는 함수로, 삼각함수로 회전 각도에 따른 세 꼭짓점 좌표(`POINT[3]`)를 직접 계산하여 전달하면 GDI만으로 이미지 회전이 가능합니다.
 
 이 방식을 무기 렌더링과 보스의 검 소환 연출 등 **회전이 반드시 필요한 최소한의 오브젝트에만 적용**하여, GDI+ 없이도 프레임 저하를 방지했습니다.

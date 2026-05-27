@@ -35,41 +35,35 @@
         <div class="project-meta">
             {% if page.period %}
             <div class="meta-item">
-                <span class="meta-label">개발 기간</span>
+                <span class="meta-label">기간</span>
                 <span class="meta-value">{{ page.period }}</span>
             </div>
             {% endif %}
-
             {% if page.team %}
             <div class="meta-item">
                 <span class="meta-label">인원</span>
                 <span class="meta-value">{{ page.team }}</span>
             </div>
             {% endif %}
-
             {% if page.role %}
             <div class="meta-item">
                 <span class="meta-label">담당</span>
                 <span class="meta-value">{{ page.role }}</span>
             </div>
             {% endif %}
-
             {% if page.tech %}
             <div class="meta-item">
-                <span class="meta-label">기술 스택</span>
+                <span class="meta-label">스택</span>
                 <span class="meta-value">
-            {% for t in page.tech %}
-              <span class="tag">{{ t }}</span>
-            {% endfor %}
+            {% for t in page.tech %}<span class="tag">{{ t }}</span>{% endfor %}
           </span>
             </div>
             {% endif %}
-
             {% if page.github %}
             <div class="meta-item">
-                <span class="meta-label">소스코드</span>
+                <span class="meta-label">코드</span>
                 <span class="meta-value">
-            <a href="{{ page.github }}" target="_blank" rel="noopener">GitHub 저장소</a>
+            <a href="{{ page.github }}" target="_blank" rel="noopener">GitHub 저장소 →</a>
           </span>
             </div>
             {% endif %}
