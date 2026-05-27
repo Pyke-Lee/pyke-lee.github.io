@@ -3,23 +3,6 @@ layout: base
 title: 홈
 ---
 
-<style>
-.content-wrap {
-  width: 100%;
-  max-width: 960px;
-  margin: 16px auto;
-  padding: 16px;
-}
-.content-wrap h1 {
-  margin: 0 0 12px;
-  text-align: center;
-}
-.content-wrap p {
-  margin: 0;
-  text-align: center;
-}
-</style>
-
 <section class="content-wrap">
   <h1>Seongho's Portfolio</h1>
   <p>

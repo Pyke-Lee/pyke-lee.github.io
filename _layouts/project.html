@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+{% include head.html %}
+<body>
+<a href="#content" class="visually-hidden-focusable">본문으로 건너뛰기</a>
+{% include header.html %}
+
+<div class="spacer" aria-hidden="true"></div>
+
+{% include menu.html %}
+<div class="overlay" id="overlay" onclick="toggleMenu()" tabindex="-1" aria-hidden="true"></div>
+
+<main id="content">
+    <article class="project">
+
+        <header class="project-header">
+            <h1 class="project-title">{{ page.title }}</h1>
+            {% if page.subtitle %}
+            <p class="project-subtitle">{{ page.subtitle }}</p>
+            {% endif %}
+        </header>
+
+        {% if page.youtube_id %}
+        <div class="video-wrap">
+            <iframe
+                    src="https://www.youtube-nocookie.com/embed/{{ page.youtube_id }}?rel=0"
+                    title="{{ page.title }}"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+            </iframe>
+        </div>
+        {% endif %}
+
+        <div class="project-meta">
+            {% if page.period %}
+            <div class="meta-item">
+                <span class="meta-label">개발 기간</span>
+                <span class="meta-value">{{ page.period }}</span>
+            </div>
+            {% endif %}
+
+            {% if page.team %}
+            <div class="meta-item">
+                <span class="meta-label">인원</span>
+                <span class="meta-value">{{ page.team }}</span>
+            </div>
+            {% endif %}
+
+            {% if page.role %}
+            <div class="meta-item">
+                <span class="meta-label">담당</span>
+                <span class="meta-value">{{ page.role }}</span>
+            </div>
+            {% endif %}
+
+            {% if page.tech %}
+            <div class="meta-item">
+                <span class="meta-label">기술 스택</span>
+                <span class="meta-value">
+            {% for t in page.tech %}
+              <span class="tag">{{ t }}</span>
+            {% endfor %}
+          </span>
+            </div>
+            {% endif %}
+
+            {% if page.github %}
+            <div class="meta-item">
+                <span class="meta-label">소스코드</span>
+                <span class="meta-value">
+            <a href="{{ page.github }}" target="_blank" rel="noopener">GitHub 저장소</a>
+          </span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="project-body">
+            {{ content }}
+        </div>
+
+    </article>
+</main>
+
+{% include scripts.html %}
+</body>
+</html>
