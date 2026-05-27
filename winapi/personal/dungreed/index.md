@@ -58,12 +58,12 @@ return pObj;
 <pre markdown="0"><code class="language-cpp">#pragma once
 #include "Entity.h"
 
-#define DEFAULT_PLAYER_HP			100
-#define DEFAULT_PLAYER_FOOD			100
-#define DEFAULT_PLAYER_DASH_COUNT	3
-#define DEFAULT_PLAYER_MOVE_SPEED	6.f
-#define DEFAULT_PLAYER_PICKUP_RADIUS	150.f
-#define DASH_REGEN_TIME				1500
+#define DEFAULT_PLAYER_HP 100
+#define DEFAULT_PLAYER_FOOD 100
+#define DEFAULT_PLAYER_DASH_COUNT 3
+#define DEFAULT_PLAYER_MOVE_SPEED 6.f
+#define DEFAULT_PLAYER_PICKUP_RADIUS 150.f
+#define DASH_REGEN_TIME 1500
 
 #define ABILITY_WRATH		2
 #define ABILITY_PATIENCE	1
@@ -73,56 +73,56 @@ return pObj;
 #define ABILITY_MAX			20
 
 class CPlayer : public CEntity {
-public:
-enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
-enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
-
-public:
-virtual void  Initialize()		   override;
-virtual int   Update()			   override;
-virtual void  Late_Update()		   override;
-virtual void  Render(HDC hDC)	   override;
-virtual void  Release()			   override;
-virtual bool  Take_Damage(int _iDmg) final override;
-
-public:
-int   Get_Pow()	    { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
-int   Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
-
-private:
-void  Get_Key();
-void  Jumping();
-void  Dash();
-void  Chasing_Mouse();
-void  Motion_Change();
-void  Find_Item_Radius();
-void  Attack();
-void  Update_HandPos();
-
-private:
-bool   m_bJump = false;
-bool   m_bDash = false;
-bool   m_bDoubleJump = false;
-
-	int    m_iMaxDash = 3;
-	int    m_iDashCount = 3;
-	int    m_iMoney = 0;
-
-	STATE  m_ePrevState = END;
-	STATE  m_eCurState = IDLE;
-
-	CObj*  m_pMainHand = nullptr;
-	CObj*  m_pSubHand = nullptr;
-
-	int    m_iPow = 0;
-	int    m_iDefence = 0;
-	int    m_iCritical = 0;
-	int    m_iCriticalDmg = 50;
-	int    m_iWrath = 0;
-	int    m_iPatience = 0;
-	int    m_iMystic = 0;
-	int    m_iGreed = 0;
-	int    m_iFocus = 0;
+    public:
+        enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
+        enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
+    
+    public:
+        virtual void Initialize() override;
+        virtual int Update() override;
+        virtual void Late_Update() override;
+        virtual void Render(HDC hDC) override;
+        virtual void Release() override;
+        virtual bool Take_Damage(int _iDmg) final override;
+    
+    public:
+        int Get_Pow() { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
+        int Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
+    
+    private:
+        void Get_Key();
+        void Jumping();
+        void Dash();
+        void Chasing_Mouse();
+        void Motion_Change();
+        void Find_Item_Radius();
+        void Attack();
+        void Update_HandPos();
+    
+    private:
+        bool m_bJump = false;
+        bool m_bDash = false;
+        bool m_bDoubleJump = false;
+    
+        int m_iMaxDash = 3;
+        int m_iDashCount = 3;
+        int m_iMoney = 0;
+    
+        STATE m_ePrevState = END;
+        STATE m_eCurState = IDLE;
+    
+        CObj* m_pMainHand = nullptr;
+        CObj* m_pSubHand = nullptr;
+    
+        int m_iPow = 0;
+        int m_iDefence = 0;
+        int m_iCritical = 0;
+        int m_iCriticalDmg = 50;
+        int m_iWrath = 0;
+        int m_iPatience = 0;
+        int m_iMystic = 0;
+        int m_iGreed = 0;
+        int m_iFocus = 0;
 };</code></pre>
 </details>
 
@@ -139,15 +139,15 @@ bool   m_bDoubleJump = false;
 
 class CWeapon : public CItem {
 public:
-enum TYPE { ONE, TWO, GUN, END };
+    enum TYPE { ONE, TWO, GUN, END };
 
 public:
-virtual void Initialize()	PURE;
-virtual int  Update()		PURE;
-virtual void Late_Update()	PURE;
-virtual void Render(HDC hDC)	PURE;
-virtual void Release()		PURE;
-virtual void PickUp()		PURE;
+    virtual void Initialize() PURE;
+    virtual int Update() PURE;
+    virtual void Late_Update() PURE;
+    virtual void Render(HDC hDC) PURE;
+    virtual void Release() PURE;
+    virtual void PickUp() PURE;
 
 public:
 void  Rotate();
@@ -270,8 +270,7 @@ Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 �
 		CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
 		CTileMgr::Get_Instance()-&gt;Release();
 
-		if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS)
-			|| m_eCurStage == ST_TOWN) {
+		if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS) || m_eCurStage == ST_TOWN) {
 			std::for_each(m_vecDungeon.begin(), m_vecDungeon.end(), Safe_Delete&lt;CStage*&gt;);
 		}
 
