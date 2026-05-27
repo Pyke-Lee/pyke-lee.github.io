@@ -35,7 +35,7 @@
         <div class="project-meta">
             {% if page.period %}
             <div class="meta-item">
-                <span class="meta-label">기간</span>
+                <span class="meta-label">개발 기간</span>
                 <span class="meta-value">{{ page.period }}</span>
             </div>
             {% endif %}
@@ -53,7 +53,7 @@
             {% endif %}
             {% if page.tech %}
             <div class="meta-item">
-                <span class="meta-label">스택</span>
+                <span class="meta-label">기술 스택</span>
                 <span class="meta-value">
             {% for t in page.tech %}<span class="tag">{{ t }}</span>{% endfor %}
           </span>
@@ -61,7 +61,7 @@
             {% endif %}
             {% if page.github %}
             <div class="meta-item">
-                <span class="meta-label">코드</span>
+                <span class="meta-label">소스코드</span>
                 <span class="meta-value">
             <a href="{{ page.github }}" target="_blank" rel="noopener">GitHub 저장소 →</a>
           </span>
@@ -77,5 +77,22 @@
 </main>
 
 {% include scripts.html %}
+
+<!-- 구문 하이라이트 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/catppuccin-mocha.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+<script>
+    // 토글이 열릴 때 하이라이트 적용
+    document.querySelectorAll('.code-block').forEach(function(el) {
+        el.addEventListener('toggle', function() {
+            if (el.open) {
+                el.querySelectorAll('pre code:not(.hljs)').forEach(function(block) {
+                    hljs.highlightElement(block);
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

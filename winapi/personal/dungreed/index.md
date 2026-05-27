@@ -32,7 +32,7 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 
 <details class="code-block">
 <summary>AbstractFactory.h <span class="file-badge">템플릿 팩토리</span></summary>
-<pre><code>#pragma once
+<pre><code class="language-cpp">#pragma once
 #include "Obj.h"
 
 template&lt;typename T&gt;
@@ -49,13 +49,13 @@ return pObj;
 ## 주요 구현 내용
 
 ### 플레이어 시스템
-- 이동, 점프, 대시(3회 충전 + 시간 기반 회복), 허기(Food) 시스템
-- 능력치 시스템: 분노(공격력)·인내(방어력)·신비·탐욕·집중 5종 스탯 강화
-- 마우스 기준 좌우 반전 및 무기 조준
+
+이동, 점프, 대시(3회 충전 + 시간 기반 회복), 허기(Food) 시스템을 구현했습니다.
+능력치는 분노(공격력)·인내(방어력)·신비·탐욕·집중 5종으로 구성되며, 마우스 위치 기준으로 캐릭터 좌우 반전과 무기 조준이 동작합니다.
 
 <details class="code-block">
 <summary>Player.h <span class="file-badge">플레이어 클래스 구조</span></summary>
-<pre><code>#pragma once
+<pre><code class="language-cpp">#pragma once
 #include "Entity.h"
 
 #define DEFAULT_PLAYER_HP             100
@@ -86,8 +86,8 @@ virtual void  Release()              override;
 virtual bool  Take_Damage(int _iDmg) final override;
 
 public:
-int   Get_Pow()    { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
-int   Get_Defence(){ return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
+int   Get_Pow()     { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
+int   Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
 
 private:
 void  Get_Key();
@@ -107,8 +107,6 @@ bool   m_bDoubleJump = false;
     int    m_iMaxDash = 3;
     int    m_iDashCount = 3;
     int    m_iMoney = 0;
-    int    m_iMaxFood = 0;
-    int    m_iCurFood = 0;
 
     STATE  m_ePrevState = END;
     STATE  m_eCurState = IDLE;
@@ -116,7 +114,6 @@ bool   m_bDoubleJump = false;
     CObj*  m_pMainHand = nullptr;
     CObj*  m_pSubHand = nullptr;
 
-    // 능력치
     int    m_iPow = 0;
     int    m_iDefence = 0;
     int    m_iCritical = 0;
@@ -130,14 +127,14 @@ bool   m_bDoubleJump = false;
 </details>
 
 ### 전투 및 무기
-- 무기 타입 분류: 한손검(Gladius), 양손검(GreatSword), 방패(RoundShield), 총기(Colt)
-- 한손/양손/원거리 무기별 공격 패턴과 딜레이 차별화
-- `PlgBlt` 기반 무기 회전 렌더링 — 삼각함수로 `POINT[3]` 좌표를 계산하여 GDI만으로 이미지 회전 구현
-- 투사체 시스템: 무기·몬스터별 독립된 Bullet 클래스
+
+무기는 한손검(Gladius), 양손검(GreatSword), 방패(RoundShield), 총기(Colt) 4종으로 분류됩니다.
+각 타입별 공격 패턴과 딜레이가 다르며, `PlgBlt` 기반 회전 렌더링으로 마우스 방향에 따라 무기가 회전합니다.
+투사체는 무기·몬스터별로 독립된 Bullet 클래스로 구현했습니다.
 
 <details class="code-block">
 <summary>Weapon.h <span class="file-badge">무기 기반 클래스</span></summary>
-<pre><code>#pragma once
+<pre><code class="language-cpp">#pragma once
 #include "Item.h"
 
 class CWeapon : public CItem {
@@ -157,7 +154,6 @@ void  Rotate();
 
     TYPE  Get_WeaponType() { return m_eWeaponType; }
     bool  Get_Equip()      { return m_bEquip; }
-    int   Get_Price()      { return m_iPrice; }
 
 protected:
 POINT m_tPoint[3] { {0,0}, {0,0}, {0,0} };  // PlgBlt 회전 좌표
@@ -170,8 +166,8 @@ TCHAR m_pName[256] = L"";
 </details>
 
 <details class="code-block">
-<summary>Colt_Bullet.cpp — Render <span class="file-badge">PlgBlt 회전 렌더링 예시</span></summary>
-<pre><code>void CColt_Bullet::Render(HDC hDC) {
+<summary>Colt_Bullet.cpp — Render <span class="file-badge">PlgBlt 회전 렌더링</span></summary>
+<pre><code class="language-cpp">void CColt_Bullet::Render(HDC hDC) {
     int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
     int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
 
@@ -195,15 +191,15 @@ TCHAR m_pName[256] = L"";
 </details>
 
 ### 몬스터 및 보스
-- 일반 몬스터 4종: Banshee(원거리), RedGiantBat(원거리), Minotaur(근거리), GiantSkeleton(근거리)
-- 자체 중력·낙하 시스템, 타일 충돌 기반 착지 판정
-- 보스 Belial: 다관절 구조(Hand 분리), 검 소환(Belial_Sword), 탄막(Belial_Bullet) 등 복합 패턴
+
+일반 몬스터 4종(Banshee, RedGiantBat, Minotaur, GiantSkeleton)은 각각 원거리/근거리 공격 패턴을 가지며, 자체 중력·낙하 시스템과 타일 충돌 기반 착지 판정으로 동작합니다.
+
+보스 Belial은 다관절 구조(Hand 분리), 검 소환(Belial_Sword), 4방향 나선 탄막(Belial_Bullet) 등 복합 패턴으로 구현했습니다.
 
 <details class="code-block">
-<summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 로직</span></summary>
-<pre><code>void CBelial_Sword::Rotate() {
+<summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 좌표 계산</span></summary>
+<pre><code class="language-cpp">void CBelial_Sword::Rotate() {
     if (!m_bFire) {
-        // 플레이어 방향으로 각도 계산
         POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
         POINT ptPlayer {
             (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fX,
@@ -237,8 +233,8 @@ TCHAR m_pName[256] = L"";
 </details>
 
 <details class="code-block">
-<summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 회전 탄막 생성</span></summary>
-<pre><code>void CBoss_Belial::Create_Bullet() {
+<summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 나선 탄막</span></summary>
+<pre><code class="language-cpp">void CBoss_Belial::Create_Bullet() {
     CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
 
     if (m_bRight) { m_fAngle += 5.f; }
@@ -268,13 +264,14 @@ TCHAR m_pName[256] = L"";
 </details>
 
 ### 던전 및 스테이지
-- Town → Dungeon 5층(F0~F4) → Boss 순서의 스테이지 진행 구조
-- StageMgr가 각 층 인스턴스를 vector로 관리하며 전진·후퇴 시 상태 보존
-- Gate 오브젝트를 통한 층간 이동, 몬스터 전멸 시 다음 층 개방
+
+Town → Dungeon 5층(F0~F4) → Boss 순서로 진행되는 스테이지 구조입니다.
+StageMgr가 각 층의 인스턴스를 vector로 관리하며, 전진·후퇴 시 몬스터·아이템 상태를 보존합니다.
+Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 시 다음 층이 개방됩니다.
 
 <details class="code-block">
 <summary>StageMgr.cpp — Set_Stage <span class="file-badge">스테이지 전환 및 상태 보존</span></summary>
-<pre><code>void CStageMgr::Set_Stage(STAGEID eID) {
+<pre><code class="language-cpp">void CStageMgr::Set_Stage(STAGEID eID) {
     m_eCurStage = eID;
 
     if (m_ePrevStage != m_eCurStage) {
@@ -295,7 +292,7 @@ TCHAR m_pName[256] = L"";
         CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
         CTileMgr::Get_Instance()-&gt;Release();
 
-        // 보스 클리어 후 마을 복귀 시 던전 초기화
+        // 보스 클리어 후 마을 복귀 시 던전 전체 초기화
         if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS)
             || m_eCurStage == ST_TOWN) {
             std::for_each(m_vecDungeon.begin(),
@@ -319,13 +316,13 @@ TCHAR m_pName[256] = L"";
 </details>
 
 ### 타일 에디터
-- Edit 씬에서 타일 배치·삭제 가능한 자체 맵 에디터
-- 배경 타일과 충돌 타일을 분리(BackTile / FrontTile)하여 관리
-- 파일 저장·로드를 통해 각 스테이지 맵 데이터 관리
+
+Edit 씬에서 타일을 배치·삭제할 수 있는 자체 맵 에디터를 구현했습니다.
+배경 타일(BackTile)과 충돌 타일(FrontTile)을 분리하여 관리하며, 파일 저장·로드를 통해 각 스테이지의 맵 데이터를 관리합니다.
 
 <details class="code-block">
 <summary>TileMgr.cpp — Render <span class="file-badge">뷰포트 컬링 렌더링</span></summary>
-<pre><code>void CTileMgr::Render(HDC hDC) {
+<pre><code class="language-cpp">void CTileMgr::Render(HDC hDC) {
     int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
     int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
 
@@ -348,7 +345,7 @@ TCHAR m_pName[256] = L"";
         }
     }
 
-    // 충돌 타일 (화면 범위 체크 후 렌더)
+    // 충돌 타일은 화면 범위 체크 후 렌더
     for (auto&amp; pTile : m_vecFrontTile) {
         if (pTile-&gt;Get_Info().fX + iScrollX &gt;= -64
             &amp;&amp; pTile-&gt;Get_Info().fX + iScrollX &lt;= WINCX + 64
@@ -361,13 +358,13 @@ TCHAR m_pName[256] = L"";
 </details>
 
 ### 아이템 및 경제
-- 코인 드롭 → 플레이어 주변 자동 흡수 (Pickup Radius 150px, 호밍 이동)
-- 인벤토리 슬롯 시스템, 무기 장착·교체
-- 상점(Shop) / 식당(Restaurant) / 보물상자(TreasureChest) 시스템
+
+코인은 몬스터 처치 시 포물선 드롭 연출 후 바닥에 착지하며, 플레이어가 일정 반경(150px) 내에 접근하면 삼각함수 기반 호밍으로 자동 흡수됩니다.
+인벤토리 슬롯 시스템으로 무기를 장착·교체할 수 있고, 상점(Shop)과 식당(Restaurant), 보물상자(TreasureChest) 시스템을 구현했습니다.
 
 <details class="code-block">
 <summary>Item.cpp <span class="file-badge">아이템 드롭 & 호밍 흡수</span></summary>
-<pre><code>void CItem::DropItem() {
+<pre><code class="language-cpp">void CItem::DropItem() {
     if (m_bSpawn) {
         // 포물선 드롭 연출
         float fJumpPower = m_fPower * m_fTime
@@ -401,8 +398,13 @@ m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptTarget, ptItem);
 </details>
 
 ### NPC 상호작용
-- 5종 NPC: Shopper, Giant, InnKeeper, Commander, Butler
-- RECT 교차 판정 기반 상호작용 범위 감지, 근접 시 대화·거래 UI 활성화
+
+5종 NPC(Shopper, Giant, InnKeeper, Commander, Butler)를 구현했습니다.
+RECT 교차 판정으로 상호작용 범위를 감지하며, 플레이어가 근접하면 대화·거래 UI가 활성화됩니다.
+
+### 렌더링 최적화
+
+GDI 더블 버퍼링으로 화면 깜빡임을 방지하고, 타일 렌더링에 뷰포트 기반 컬링을 적용하여 화면 밖 타일의 렌더를 생략했습니다.
 
 ## GDI 이미지 회전과 성능 대응
 
