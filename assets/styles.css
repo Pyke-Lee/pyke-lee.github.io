@@ -13,8 +13,8 @@
   --side-pad: 12px;
   --menu-width: 380px;
   --divider: rgba(0,0,0,.12);
-  --code-bg: #1e1e2e;
-  --code-text: #cdd6f4;
+  --code-bg: #2a2520;
+  --code-text: #d4cfc6;
   --tag-bg: rgba(0,0,0,.05);
   --tag-border: rgba(0,0,0,.1);
 }
@@ -125,8 +125,7 @@ body {
    ══════════════════════════════════════════════ */
 
 .project {
-  max-width: 960px;
-  width: 100%;
+  max-width: 760px;
   margin: 0 auto;
   padding: 40px 24px 80px;
 }
@@ -327,8 +326,6 @@ body {
   padding: 0;
   border-radius: 0;
   font-size: inherit;
-  display: block;
-  white-space: pre;
 }
 
 /* highlight.js 테마 덮어쓰기 — 배경 통일 */
