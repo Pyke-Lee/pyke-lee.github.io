@@ -125,7 +125,8 @@ body {
    ══════════════════════════════════════════════ */
 
 .project {
-  max-width: 760px;
+  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 24px 80px;
 }
@@ -326,6 +327,8 @@ body {
   padding: 0;
   border-radius: 0;
   font-size: inherit;
+  display: block;
+  white-space: pre;
 }
 
 /* highlight.js 테마 덮어쓰기 — 배경 통일 */

@@ -32,7 +32,7 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 
 <details class="code-block">
 <summary>AbstractFactory.h <span class="file-badge">템플릿 팩토리</span></summary>
-<pre><code class="language-cpp">#pragma once
+<pre markdown="0"><code class="language-cpp">#pragma once
 #include "Obj.h"
 
 template&lt;typename T&gt;
@@ -55,7 +55,7 @@ return pObj;
 
 <details class="code-block">
 <summary>Player.h <span class="file-badge">플레이어 클래스 구조</span></summary>
-<pre><code class="language-cpp">#pragma once
+<pre markdown="0"><code class="language-cpp">#pragma once
 #include "Entity.h"
 
 #define DEFAULT_PLAYER_HP             100
@@ -111,8 +111,8 @@ bool   m_bDoubleJump = false;
     STATE  m_ePrevState = END;
     STATE  m_eCurState = IDLE;
 
-    CObj*  m_pMainHand = nullptr;
-    CObj*  m_pSubHand = nullptr;
+    CObj* m_pMainHand = nullptr;
+    CObj* m_pSubHand = nullptr;
 
     int    m_iPow = 0;
     int    m_iDefence = 0;
@@ -134,7 +134,7 @@ bool   m_bDoubleJump = false;
 
 <details class="code-block">
 <summary>Weapon.h <span class="file-badge">무기 기반 클래스</span></summary>
-<pre><code class="language-cpp">#pragma once
+<pre markdown="0"><code class="language-cpp">#pragma once
 #include "Item.h"
 
 class CWeapon : public CItem {
@@ -167,7 +167,7 @@ TCHAR m_pName[256] = L"";
 
 <details class="code-block">
 <summary>Colt_Bullet.cpp — Render <span class="file-badge">PlgBlt 회전 렌더링</span></summary>
-<pre><code class="language-cpp">void CColt_Bullet::Render(HDC hDC) {
+<pre markdown="0"><code class="language-cpp">void CColt_Bullet::Render(HDC hDC) {
     int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
     int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
 
@@ -198,7 +198,7 @@ TCHAR m_pName[256] = L"";
 
 <details class="code-block">
 <summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 좌표 계산</span></summary>
-<pre><code class="language-cpp">void CBelial_Sword::Rotate() {
+<pre markdown="0"><code class="language-cpp">void CBelial_Sword::Rotate() {
     if (!m_bFire) {
         POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
         POINT ptPlayer {
@@ -234,7 +234,7 @@ TCHAR m_pName[256] = L"";
 
 <details class="code-block">
 <summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 나선 탄막</span></summary>
-<pre><code class="language-cpp">void CBoss_Belial::Create_Bullet() {
+<pre markdown="0"><code class="language-cpp">void CBoss_Belial::Create_Bullet() {
     CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
 
     if (m_bRight) { m_fAngle += 5.f; }
@@ -271,7 +271,7 @@ Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 �
 
 <details class="code-block">
 <summary>StageMgr.cpp — Set_Stage <span class="file-badge">스테이지 전환 및 상태 보존</span></summary>
-<pre><code class="language-cpp">void CStageMgr::Set_Stage(STAGEID eID) {
+<pre markdown="0"><code class="language-cpp">void CStageMgr::Set_Stage(STAGEID eID) {
     m_eCurStage = eID;
 
     if (m_ePrevStage != m_eCurStage) {
@@ -322,7 +322,7 @@ Edit 씬에서 타일을 배치·삭제할 수 있는 자체 맵 에디터를 �
 
 <details class="code-block">
 <summary>TileMgr.cpp — Render <span class="file-badge">뷰포트 컬링 렌더링</span></summary>
-<pre><code class="language-cpp">void CTileMgr::Render(HDC hDC) {
+<pre markdown="0"><code class="language-cpp">void CTileMgr::Render(HDC hDC) {
     int iScrollX = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollX();
     int iScrollY = (int)CScrollMgr::Get_Instance()-&gt;Get_ScrollY();
 
@@ -364,7 +364,7 @@ Edit 씬에서 타일을 배치·삭제할 수 있는 자체 맵 에디터를 �
 
 <details class="code-block">
 <summary>Item.cpp <span class="file-badge">아이템 드롭 & 호밍 흡수</span></summary>
-<pre><code class="language-cpp">void CItem::DropItem() {
+<pre markdown="0"><code class="language-cpp">void CItem::DropItem() {
     if (m_bSpawn) {
         // 포물선 드롭 연출
         float fJumpPower = m_fPower * m_fTime
