@@ -1,6 +1,6 @@
 ---
 layout: base
-title: Dungreed 모작 (WinAPI)
+title: Tribes of Midgard 모작 (DirectX11)
 ---
 
 <style>
@@ -38,14 +38,14 @@ title: Dungreed 모작 (WinAPI)
 </style>
 
 <section class="content-wrap">
-  <h1>Dungreed 모작 (WinAPI)</h1>
+  <h1>Tribes of Midgard 모작 (DirectX11)</h1>
   <p></p>
 </section>
 
 <div class="video-wrap">
     <iframe 
-        src="https://www.youtube-nocookie.com/embed/0cO1UhW1g5g?rel=0"
-        title="Dungreed 모작"
+        src="https://www.youtube-nocookie.com/embed/TwHdZhRl3bs?rel=0"
+        title="Tribes of Midgard 모작"
         loading="lazy"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen>
