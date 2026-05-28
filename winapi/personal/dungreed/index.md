@@ -52,8 +52,7 @@ public:
 
 		return pObj;
 	}
-};
-</code></pre>
+};</code></pre>
 </details>
 
 ## 주요 구현 내용
