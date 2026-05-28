@@ -6,7 +6,7 @@ youtube_id: 0cO1UhW1g5g
 period: 2024.04 ~ 2024.05 (약 1개월)
 team: 1인 개발
 role: 전체 (설계, 구현, 타일 에디터, 사운드)
-tech: [C++, WinAPI, GDI, FMOD]
+tech: [C++, WinAPI, FMOD]
 github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/3%EA%B0%9C%EC%9B%94%EC%B0%A8%20API%20%EC%8B%9C%EC%97%B0%ED%9A%8C%20%EB%8D%98%EA%B7%B8%EB%A6%AC%EB%93%9C%20%EB%AA%A8%EC%9E%91
 ---
 
