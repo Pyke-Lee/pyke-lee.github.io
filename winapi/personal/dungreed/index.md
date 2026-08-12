@@ -38,19 +38,19 @@ github: https://github.com/Pyke-Lee/Jusin-Project/tree/main/3%EA%B0%9C%EC%9B%94/
 <pre markdown="0"><code class="language-cpp">#pragma once
 #include "Obj.h"
 
-template&lttypename T&gt
+template&lt;typename T&gt;
 class CAbstractFactory {
 public:
-    CAbstractFactory() {}
-    ~CAbstractFactory() {}
+CAbstractFactory() {}
+~CAbstractFactory() {}
 
 public:
-    static CObj* Create() {
-        CObj* pObj = new T;
-        pObj-&gtInitialize();
+static CObj* Create() {
+CObj* pObj = new T;
+pObj-&gt;Initialize();
 
-		return pObj;
-	}
+        return pObj;
+    }
 };</code></pre>
 </details>
 
@@ -69,167 +69,167 @@ public:
 <pre markdown="0"><code class="language-cpp">#pragma once
 #include "Entity.h"
 
-#define DEFAULT_PLAYER_HP				100
-#define DEFAULT_PLAYER_FOOD				100
-#define DEFAULT_PLAYER_DASH_COUNT		3
-#define DEFAULT_PLAYER_MOVE_SPEED		6.f
-#define DEFAULT_PLAYER_PICKUP_RADIUS	150.f
+#define DEFAULT_PLAYER_HP                100
+#define DEFAULT_PLAYER_FOOD                100
+#define DEFAULT_PLAYER_DASH_COUNT        3
+#define DEFAULT_PLAYER_MOVE_SPEED        6.f
+#define DEFAULT_PLAYER_PICKUP_RADIUS    150.f
 
-#define DASH_REGEN_TIME					1500
+#define DASH_REGEN_TIME                    1500
 
-#define ABILITY_WRATH					2
-#define ABILITY_PATIENCE				1
-#define ABILITY_MYSTIC					1
-#define ABILITY_GREED					2
-#define ABILITY_FOCUS					2
-#define ABILITY_MAX						20
+#define ABILITY_WRATH                    2
+#define ABILITY_PATIENCE                1
+#define ABILITY_MYSTIC                    1
+#define ABILITY_GREED                    2
+#define ABILITY_FOCUS                    2
+#define ABILITY_MAX                        20
 
 class CPlayer : public CEntity {
 public:
-    enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
-    enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
+enum STATE { IDLE, WALK, RUN, JUMP, DEAD, END };
+enum ABILITY { WRATH, PATIENCE, MYSTIC, GREED, FOCUS, ABILITY_END };
 
 public:
-    CPlayer() {}
-    virtual ~CPlayer() { Release(); }
+CPlayer() {}
+virtual ~CPlayer() { Release(); }
 
 public:
-    virtual void	Initialize()				override;
-    virtual int		Update()					override;
-    virtual void	Late_Update()				override;
-    virtual void	Render(HDC hDC)				override;
-    virtual void	Release()					override;
-    virtual bool	Take_Damage(int _iDmg)	final override;
+virtual void    Initialize()                override;
+virtual int        Update()                    override;
+virtual void    Late_Update()                override;
+virtual void    Render(HDC hDC)                override;
+virtual void    Release()                    override;
+virtual bool    Take_Damage(int _iDmg)    final override;
 
 public:
-    bool		Get_Down() { return m_bDown; }
-    bool		Get_Dash() { return m_bDash; }
-    bool		Get_GodMode() { return m_bGodMode; }
-    bool		Get_Visible() { return m_bVisible; }
-    int			Get_Money() { return m_iMoney; }
-    int			Get_MaxFood() { return m_iMaxFood; }
-    int			Get_CurFood() { return m_iCurFood; }
-    int			Get_MaxDash() { return m_iMaxDash; }
-    int			Get_CurDash() { return m_iDashCount; }
-    RECT&amp		Get_HitRect() { return m_tHitRect; }
+bool        Get_Down() { return m_bDown; }
+bool        Get_Dash() { return m_bDash; }
+bool        Get_GodMode() { return m_bGodMode; }
+bool        Get_Visible() { return m_bVisible; }
+int            Get_Money() { return m_iMoney; }
+int            Get_MaxFood() { return m_iMaxFood; }
+int            Get_CurFood() { return m_iCurFood; }
+int            Get_MaxDash() { return m_iMaxDash; }
+int            Get_CurDash() { return m_iDashCount; }
+RECT&amp;        Get_HitRect() { return m_tHitRect; }
 
 public:
-    bool		Get_StatusOpen() { return m_bStatus; }
-    int			Get_Pow() { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
-    int			Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
-    int			Get_Tough() { return m_iTough; }
-    int			Get_Critical() { return (m_iCritical + (m_iMystic * ABILITY_MYSTIC)); }
-    int			Get_CriticalDmg() { return (m_iCriticalDmg + (m_iFocus * ABILITY_FOCUS)); }
-    int			Get_Dodge() { return (m_iDodge + (m_iMystic * ABILITY_MYSTIC)); }
-    float		Get_AttackSpeed();
+bool        Get_StatusOpen() { return m_bStatus; }
+int            Get_Pow() { return (m_iPow + (m_iWrath * ABILITY_WRATH)); }
+int            Get_Defence() { return (m_iDefence + (m_iPatience * ABILITY_PATIENCE)); }
+int            Get_Tough() { return m_iTough; }
+int            Get_Critical() { return (m_iCritical + (m_iMystic * ABILITY_MYSTIC)); }
+int            Get_CriticalDmg() { return (m_iCriticalDmg + (m_iFocus * ABILITY_FOCUS)); }
+int            Get_Dodge() { return (m_iDodge + (m_iMystic * ABILITY_MYSTIC)); }
+float        Get_AttackSpeed();
 
 public:
-    int			Get_Level() { return m_iLevel; }
-    int			Get_Wrath() { return m_iWrath; }
-    int			Get_Patience() { return m_iPatience; }
-    int			Get_Mystic() { return m_iMystic; }
-    int			Get_Greed() { return m_iGreed; }
-    int			Get_Focus() { return m_iFocus; }
-    int			Get_AbilityPoint() { return m_iPoint; }
+int            Get_Level() { return m_iLevel; }
+int            Get_Wrath() { return m_iWrath; }
+int            Get_Patience() { return m_iPatience; }
+int            Get_Mystic() { return m_iMystic; }
+int            Get_Greed() { return m_iGreed; }
+int            Get_Focus() { return m_iFocus; }
+int            Get_AbilityPoint() { return m_iPoint; }
 
 public:
-    void		Set_Ability(ABILITY eAbility, int iValue);
-    void		Reset_Ability();
+void        Set_Ability(ABILITY eAbility, int iValue);
+void        Reset_Ability();
 
 public:
-    void		Set_StatusOpen() { m_bStatus = !m_bStatus; }
-    void		Set_Pow(int _iValue) { m_iPow += _iValue; }
-    void		Set_Defence(int _iValue) { m_iDefence += _iValue; }
-    void		Set_Tough(int _iValue) { m_iTough += _iValue; }
-    void		Set_Critical(int _iValue) { m_iCritical += _iValue; }
-    void		Set_CriticalDmg(int _iValue) { m_iCriticalDmg += _iValue; }
-    void		Set_Dodge(int _iValue) { m_iDodge += _iValue; }
+void        Set_StatusOpen() { m_bStatus = !m_bStatus; }
+void        Set_Pow(int _iValue) { m_iPow += _iValue; }
+void        Set_Defence(int _iValue) { m_iDefence += _iValue; }
+void        Set_Tough(int _iValue) { m_iTough += _iValue; }
+void        Set_Critical(int _iValue) { m_iCritical += _iValue; }
+void        Set_CriticalDmg(int _iValue) { m_iCriticalDmg += _iValue; }
+void        Set_Dodge(int _iValue) { m_iDodge += _iValue; }
 
 public:
-    void		Set_Down() { m_bDown = false; }
-    void		Set_Money(int _iMoney) { m_iMoney += _iMoney; }
-    void		Set_MainHand(CObj* pItem) { Safe_Delete(m_pMainHand); m_pMainHand = pItem; }
-    void		Set_SubHand(CObj* pItem) { Safe_Delete(m_pSubHand); m_pSubHand = pItem; }
-    void		Set_Visible(bool bCheck) { m_bVisible = bCheck; }
-    void		Set_KeyLock(bool bCheck) { m_bKeyLock = bCheck; }
-    void		Set_HitRect(long lLeft, long lTop, long lRight, long lBottom) { m_tHitRect = { lLeft, lTop, lRight, lBottom }; }
-    void		Set_CurFood(int iFood);
+void        Set_Down() { m_bDown = false; }
+void        Set_Money(int _iMoney) { m_iMoney += _iMoney; }
+void        Set_MainHand(CObj* pItem) { Safe_Delete(m_pMainHand); m_pMainHand = pItem; }
+void        Set_SubHand(CObj* pItem) { Safe_Delete(m_pSubHand); m_pSubHand = pItem; }
+void        Set_Visible(bool bCheck) { m_bVisible = bCheck; }
+void        Set_KeyLock(bool bCheck) { m_bKeyLock = bCheck; }
+void        Set_HitRect(long lLeft, long lTop, long lRight, long lBottom) { m_tHitRect = { lLeft, lTop, lRight, lBottom }; }
+void        Set_CurFood(int iFood);
 
 public:
-    void		Land();
-    void		Calc_Damage();
-    void		Reset();
+void        Land();
+void        Calc_Damage();
+void        Reset();
 
 private:
-    void		Get_Key();
-    void		Jumping();
-    void		Dash();
-    void		Chasing_Mouse();
-    void		Motion_Change();
-    void		Fixed_Pos();
-    void		Find_Item_Radius();
-    void		Attack();
-    void		Update_HandPos();
+void        Get_Key();
+void        Jumping();
+void        Dash();
+void        Chasing_Mouse();
+void        Motion_Change();
+void        Fixed_Pos();
+void        Find_Item_Radius();
+void        Attack();
+void        Update_HandPos();
 
 private:
-    bool		m_bJump = false;
-    bool		m_bDown = false;
-    bool		m_bDash = false;
-    bool		m_bCharge = false;
-    bool		m_bDoubleJump = false;
-    bool		m_bAttack = false;
-    bool		m_bVisible = true;
-    bool		m_bKeyLock = false;
-    bool		m_bAttackCheck = false;
+bool        m_bJump = false;
+bool        m_bDown = false;
+bool        m_bDash = false;
+bool        m_bCharge = false;
+bool        m_bDoubleJump = false;
+bool        m_bAttack = false;
+bool        m_bVisible = true;
+bool        m_bKeyLock = false;
+bool        m_bAttackCheck = false;
 
-	float		m_fFindRadius = DEFAULT_PLAYER_PICKUP_RADIUS;
-	float		m_fDashAngle = 0.f;
+    float        m_fFindRadius = DEFAULT_PLAYER_PICKUP_RADIUS;
+    float        m_fDashAngle = 0.f;
 
-	int			m_iMaxDash = 3;
-	int			m_iDashCount = 3;
-	int			m_iMoney = 0;
-	int			m_iMaxFood = 0;
-	int			m_iCurFood = 0;
-	int			m_iMaxDoubleJump = 1;
-	int			m_iDoubleJump = 1;
-	int			m_iSwing = 0;
+    int            m_iMaxDash = 3;
+    int            m_iDashCount = 3;
+    int            m_iMoney = 0;
+    int            m_iMaxFood = 0;
+    int            m_iCurFood = 0;
+    int            m_iMaxDoubleJump = 1;
+    int            m_iDoubleJump = 1;
+    int            m_iSwing = 0;
 
-	STATE		m_ePrevState = END;
-	STATE		m_eCurState = IDLE;
+    STATE        m_ePrevState = END;
+    STATE        m_eCurState = IDLE;
 
-	POINTF		m_ptRightHand = { 0, 0 };
-	POINTF		m_ptLeftHand = { 0, 0 };
+    POINTF        m_ptRightHand = { 0, 0 };
+    POINTF        m_ptLeftHand = { 0, 0 };
 
-	DWORD		m_dwPrev = (DWORD)GetTickCount64();
-	DWORD		m_dwDash = (DWORD)GetTickCount64();
-	DWORD		m_dwTime = (DWORD)GetTickCount64();
-	DWORD		m_dwDelay = (DWORD)GetTickCount64();
-	DWORD		m_dwDown = (DWORD)GetTickCount64();
-	DWORD		m_dwGod = 0;
-	DWORD		m_dwSwing = 0;
+    DWORD        m_dwPrev = (DWORD)GetTickCount64();
+    DWORD        m_dwDash = (DWORD)GetTickCount64();
+    DWORD        m_dwTime = (DWORD)GetTickCount64();
+    DWORD        m_dwDelay = (DWORD)GetTickCount64();
+    DWORD        m_dwDown = (DWORD)GetTickCount64();
+    DWORD        m_dwGod = 0;
+    DWORD        m_dwSwing = 0;
 
-	CObj*		m_pMainHand = nullptr;
-	CObj*		m_pSubHand = nullptr;
+    CObj*        m_pMainHand = nullptr;
+    CObj*        m_pSubHand = nullptr;
 
-	RECT		m_tHitRect { 0, 0, 0, 0 };
+    RECT        m_tHitRect { 0, 0, 0, 0 };
 
-	BLENDFUNCTION m_tBf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+    BLENDFUNCTION m_tBf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-	bool		m_bStatus = false;
-	int			m_iPow = 0;
-	int			m_iDefence = 0;
-	int			m_iTough = 0;
-	int			m_iCritical = 0;
-	int			m_iCriticalDmg = 50;
-	int			m_iDodge = 0;
+    bool        m_bStatus = false;
+    int            m_iPow = 0;
+    int            m_iDefence = 0;
+    int            m_iTough = 0;
+    int            m_iCritical = 0;
+    int            m_iCriticalDmg = 50;
+    int            m_iDodge = 0;
 
-	int			m_iLevel = 30;
-	int			m_iWrath = 0;
-	int			m_iPatience = 0;
-	int			m_iMystic = 0;
-	int			m_iGreed = 0;
-	int			m_iFocus = 0;
-	int			m_iPoint = 0;
+    int            m_iLevel = 30;
+    int            m_iWrath = 0;
+    int            m_iPatience = 0;
+    int            m_iMystic = 0;
+    int            m_iGreed = 0;
+    int            m_iFocus = 0;
+    int            m_iPoint = 0;
 };</code></pre>
 </details>
 
@@ -249,42 +249,42 @@ private:
 
 class CWeapon : public CItem {
 public:
-    enum TYPE { ONE, TWO, GUN, END };
+enum TYPE { ONE, TWO, GUN, END };
 
 public:
-    CWeapon() {}
-    virtual ~CWeapon() {};
+CWeapon() {}
+virtual ~CWeapon() {};
 
 public:
-    virtual void	Initialize()		PURE;
-    virtual int		Update()			PURE;
-    virtual void	Late_Update()		PURE;
-    virtual void	Render(HDC hDC)		PURE;
-    virtual void	Release()			PURE;
-    virtual void	PickUp()			PURE;
+virtual void    Initialize()        PURE;
+virtual int        Update()            PURE;
+virtual void    Late_Update()        PURE;
+virtual void    Render(HDC hDC)        PURE;
+virtual void    Release()            PURE;
+virtual void    PickUp()            PURE;
 
 public:
-    void			Rotate();
+void            Rotate();
 
-	bool			Get_Equip() { return m_bEquip; }
-	void			Set_Equip(bool bCheck) { m_bEquip = bCheck; }
-	DWORD			Get_DelayTime() { return m_dwDelayTime; }
-	TYPE			Get_WeaponType() { return m_eWeaponType; }
-	int				Get_Price() { return m_iPrice; }
-	TCHAR*			Get_Name() { return m_pName; }
-	void			Set_Price(int iPrice) { m_iPrice = iPrice; }
-	bool			Get_Sell() { return m_bSell; }
-	void			Set_Sell(bool bCheck) { m_bSell = bCheck; }
+    bool            Get_Equip() { return m_bEquip; }
+    void            Set_Equip(bool bCheck) { m_bEquip = bCheck; }
+    DWORD            Get_DelayTime() { return m_dwDelayTime; }
+    TYPE            Get_WeaponType() { return m_eWeaponType; }
+    int                Get_Price() { return m_iPrice; }
+    TCHAR*            Get_Name() { return m_pName; }
+    void            Set_Price(int iPrice) { m_iPrice = iPrice; }
+    bool            Get_Sell() { return m_bSell; }
+    void            Set_Sell(bool bCheck) { m_bSell = bCheck; }
 
 protected:
-    POINT			m_tPoint[3] { {0,0}, {0,0}, {0,0} };
-    bool			m_bEquip = false;
-    TYPE			m_eWeaponType = END;
-    int				m_iPrice = 0;
-    DWORD			m_dwDelayTime = 0;
-    bool			m_bSell = true;
-    bool			m_bInv = false;
-    TCHAR			m_pName[256] = L"";
+POINT            m_tPoint[3] { {0,0}, {0,0}, {0,0} };
+bool            m_bEquip = false;
+TYPE            m_eWeaponType = END;
+int                m_iPrice = 0;
+DWORD            m_dwDelayTime = 0;
+bool            m_bSell = true;
+bool            m_bInv = false;
+TCHAR            m_pName[256] = L"";
 };</code></pre>
 </details>
 
@@ -300,24 +300,24 @@ protected:
 <details class="code-block">
 <summary>Belial_Sword.cpp — Rotate <span class="file-badge">보스 검 회전 좌표 계산</span></summary>
 <pre markdown="0"><code class="language-cpp">void CBelial_Sword::Rotate() {
-	if (!m_bFire) {
-		POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
-		POINT ptPlayer { (LONG)CObjMgr::Get_Instance()-&gtGet_Player()-&gtGet_Collider_Info().fX, (LONG)CObjMgr::Get_Instance()-&gtGet_Player()-&gtGet_Collider_Info().fY };
-		m_fAngle = CObjMgr::Get_Instance()-&gtFind_Angle_AtoB(ptPlayer, ptBullet);
+    if (!m_bFire) {
+        POINT ptBullet { (LONG)m_tInfo.fX, (LONG)m_tInfo.fY };
+        POINT ptPlayer { (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fX, (LONG)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Collider_Info().fY };
+        m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptPlayer, ptBullet);
 
-		float _fAngle = -m_fAngle - 90.f;
+        float _fAngle = -m_fAngle - 90.f;
 
-		float fDiagonal = sqrtf(powf((m_tInfo.fCX * 0.5f), 2) + powf((m_tInfo.fCY * 0.5f), 2));
+        float fDiagonal = sqrtf(powf((m_tInfo.fCX * 0.5f), 2) + powf((m_tInfo.fCY * 0.5f), 2));
 
-		m_tPoint[0].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 225.f) * (PI / 180.f))));
-		m_tPoint[0].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 225.f) * (PI / 180.f))));
+        m_tPoint[0].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 225.f) * (PI / 180.f))));
+        m_tPoint[0].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 225.f) * (PI / 180.f))));
 
-		m_tPoint[1].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 315.f) * (PI / 180.f))));
-		m_tPoint[1].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 315.f) * (PI / 180.f))));
+        m_tPoint[1].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 315.f) * (PI / 180.f))));
+        m_tPoint[1].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 315.f) * (PI / 180.f))));
 
-		m_tPoint[2].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 135.f) * (PI / 180.f))));
-		m_tPoint[2].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 135.f) * (PI / 180.f))));
-	}
+        m_tPoint[2].x = LONG((m_tInfo.fCX * 0.5f) + (fDiagonal * cosf((_fAngle + 135.f) * (PI / 180.f))));
+        m_tPoint[2].y = LONG((m_tInfo.fCY * 0.5f) + (fDiagonal * sinf((_fAngle + 135.f) * (PI / 180.f))));
+    }
 }</code></pre>
 </details>
 
@@ -327,30 +327,30 @@ protected:
 <details class="code-block">
 <summary>Boss_Belial.cpp — Create_Bullet <span class="file-badge">4방향 나선 탄막</span></summary>
 <pre markdown="0"><code class="language-cpp">void CBoss_Belial::Create_Bullet() {
-	CSoundMgr::Get_Instance()-&gtPlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
+    CSoundMgr::Get_Instance()-&gt;PlaySoundW(L"SFX_Belial_Bullet.wav", SOUND_EFFECT, 1.f);
 
-	if (m_bRight) { m_fAngle += 5.f; }
-	else { m_fAngle -= 5.f; }
+    if (m_bRight) { m_fAngle += 5.f; }
+    else { m_fAngle -= 5.f; }
 
-	CObj* pBullet = CAbstractFactory&ltCBelial_Bullet&gt::Create();
-	pBullet-&gtSet_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-	pBullet-&gtSet_Angle(m_fAngle);
-	CObjMgr::Get_Instance()-&gtAdd_Object(OBJ_BULLET, pBullet);
+    CObj* pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle(m_fAngle);
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-	pBullet = CAbstractFactory&ltCBelial_Bullet&gt::Create();
-	pBullet-&gtSet_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-	pBullet-&gtSet_Angle((m_fAngle + 90.f));
-	CObjMgr::Get_Instance()-&gtAdd_Object(OBJ_BULLET, pBullet);
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 90.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-	pBullet = CAbstractFactory&ltCBelial_Bullet&gt::Create();
-	pBullet-&gtSet_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-	pBullet-&gtSet_Angle((m_fAngle + 180.f));
-	CObjMgr::Get_Instance()-&gtAdd_Object(OBJ_BULLET, pBullet);
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 180.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 
-	pBullet = CAbstractFactory&ltCBelial_Bullet&gt::Create();
-	pBullet-&gtSet_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
-	pBullet-&gtSet_Angle((m_fAngle + 270.f));
-	CObjMgr::Get_Instance()-&gtAdd_Object(OBJ_BULLET, pBullet);
+    pBullet = CAbstractFactory&lt;CBelial_Bullet&gt;::Create();
+    pBullet-&gt;Set_Pos(m_tInfo.fX, (m_tInfo.fY + 110));
+    pBullet-&gt;Set_Angle((m_fAngle + 270.f));
+    CObjMgr::Get_Instance()-&gt;Add_Object(OBJ_BULLET, pBullet);
 }</code></pre>
 </details>
 
@@ -366,88 +366,88 @@ Gate 오브젝트를 통해 층간 이동이 이루어지며, 몬스터 전멸 �
 <details class="code-block">
 <summary>StageMgr.cpp — Set_Stage <span class="file-badge">스테이지 전환 및 상태 보존</span></summary>
 <pre markdown="0"><code class="language-cpp">void CStageMgr::Set_Stage(STAGEID eID) {
-	m_eCurStage = eID;
+    m_eCurStage = eID;
 
-	if (m_ePrevStage != m_eCurStage) {
-		CSoundMgr::Get_Instance()-&gtStopAll();
+    if (m_ePrevStage != m_eCurStage) {
+        CSoundMgr::Get_Instance()-&gt;StopAll();
 
-		if (!(CObjMgr::Get_Instance()-&gtGet_GateList()-&gtempty())) {m_pStage-&gtGet_GateList()-&gtsplice((m_pStage-&gtGet_GateList()-&gtend()), (*CObjMgr::Get_Instance()-&gtGet_GateList())); }
-		if (!(CObjMgr::Get_Instance()-&gtGet_MonsterList()-&gtempty())) { m_pStage-&gtGet_MonsterList()-&gtsplice((m_pStage-&gtGet_MonsterList()-&gtend()), (*CObjMgr::Get_Instance()-&gtGet_MonsterList())); }
-		if (!(CObjMgr::Get_Instance()-&gtGet_DropList()-&gtempty())) { m_pStage-&gtGet_DropList()-&gtsplice((m_pStage-&gtGet_DropList()-&gtend()), (*CObjMgr::Get_Instance()-&gtGet_DropList())); }
-		if (!(CObjMgr::Get_Instance()-&gtGet_NPCList()-&gtempty())) { m_pStage-&gtGet_NPCList()-&gtsplice((m_pStage-&gtGet_NPCList()-&gtend()), (*CObjMgr::Get_Instance()-&gtGet_NPCList())); }
-		CObjMgr::Get_Instance()-&gtDelete_Object(OBJ_BULLET);
-		CObjMgr::Get_Instance()-&gtDelete_Object(OBJ_UI);
-		CObjMgr::Get_Instance()-&gtDelete_RenderList();
-		CTileMgr::Get_Instance()-&gtRelease();
+        if (!(CObjMgr::Get_Instance()-&gt;Get_GateList()-&gt;empty())) {m_pStage-&gt;Get_GateList()-&gt;splice((m_pStage-&gt;Get_GateList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_GateList())); }
+        if (!(CObjMgr::Get_Instance()-&gt;Get_MonsterList()-&gt;empty())) { m_pStage-&gt;Get_MonsterList()-&gt;splice((m_pStage-&gt;Get_MonsterList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_MonsterList())); }
+        if (!(CObjMgr::Get_Instance()-&gt;Get_DropList()-&gt;empty())) { m_pStage-&gt;Get_DropList()-&gt;splice((m_pStage-&gt;Get_DropList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_DropList())); }
+        if (!(CObjMgr::Get_Instance()-&gt;Get_NPCList()-&gt;empty())) { m_pStage-&gt;Get_NPCList()-&gt;splice((m_pStage-&gt;Get_NPCList()-&gt;end()), (*CObjMgr::Get_Instance()-&gt;Get_NPCList())); }
+        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_BULLET);
+        CObjMgr::Get_Instance()-&gt;Delete_Object(OBJ_UI);
+        CObjMgr::Get_Instance()-&gt;Delete_RenderList();
+        CTileMgr::Get_Instance()-&gt;Release();
 
-		if (m_ePrevStage == ST_TOWN || m_ePrevStage == ST_BOSS) { Safe_Delete(m_pStage); }
-		if ((m_ePrevStage == ST_DF4 &amp&amp m_eCurStage == ST_BOSS) || m_eCurStage == ST_TOWN) { std::for_each(m_vecDungeon.begin(), m_vecDungeon.end(), Safe_Delete&ltCStage*&gt); }
-		if (m_ePrevStage == ST_TOWN || m_eCurStage == ST_TOWN) {
-			CObjMgr::Get_Instance()-&gtReset_KillMonster();
-			CObjMgr::Get_Instance()-&gtSet_KillBelial(false);
-			m_bClear = false;
-		}
+        if (m_ePrevStage == ST_TOWN || m_ePrevStage == ST_BOSS) { Safe_Delete(m_pStage); }
+        if ((m_ePrevStage == ST_DF4 &amp;&amp; m_eCurStage == ST_BOSS) || m_eCurStage == ST_TOWN) { std::for_each(m_vecDungeon.begin(), m_vecDungeon.end(), Safe_Delete&lt;CStage*&gt;); }
+        if (m_ePrevStage == ST_TOWN || m_eCurStage == ST_TOWN) {
+            CObjMgr::Get_Instance()-&gt;Reset_KillMonster();
+            CObjMgr::Get_Instance()-&gt;Set_KillBelial(false);
+            m_bClear = false;
+        }
 
-		switch (m_eCurStage) {
-		case ST_TOWN:
-			m_pStage = new CTown;
-			break;
+        switch (m_eCurStage) {
+        case ST_TOWN:
+            m_pStage = new CTown;
+            break;
 
-		case ST_DF0:
-			if (!m_vecDungeon[0]) { m_vecDungeon[0] = new CDungeon_F0; }
+        case ST_DF0:
+            if (!m_vecDungeon[0]) { m_vecDungeon[0] = new CDungeon_F0; }
 
-			if (m_ePrevStage == ST_DF1) { m_vecDungeon[0]-&gtSet_Back(true); }
+            if (m_ePrevStage == ST_DF1) { m_vecDungeon[0]-&gt;Set_Back(true); }
 
-			m_pStage = m_vecDungeon[0];
-			break;
+            m_pStage = m_vecDungeon[0];
+            break;
 
-		case ST_DF1:
-			if (!m_vecDungeon[1]) { m_vecDungeon[1] = new CDungeon_F1; }
+        case ST_DF1:
+            if (!m_vecDungeon[1]) { m_vecDungeon[1] = new CDungeon_F1; }
 
-			if (m_ePrevStage == ST_DF0) { m_vecDungeon[1]-&gtSet_Back(false); }
-			else { m_vecDungeon[1]-&gtSet_Back(true); }
+            if (m_ePrevStage == ST_DF0) { m_vecDungeon[1]-&gt;Set_Back(false); }
+            else { m_vecDungeon[1]-&gt;Set_Back(true); }
 
-			m_pStage = m_vecDungeon[1];
-			break;
+            m_pStage = m_vecDungeon[1];
+            break;
 
-		case ST_DF2:
-			if (!m_vecDungeon[2]) { m_vecDungeon[2] = new CDungeon_F2; }
+        case ST_DF2:
+            if (!m_vecDungeon[2]) { m_vecDungeon[2] = new CDungeon_F2; }
 
-			if (m_ePrevStage == ST_DF1) { m_vecDungeon[2]-&gtSet_Back(false); }
-			else { m_vecDungeon[2]-&gtSet_Back(true); }
+            if (m_ePrevStage == ST_DF1) { m_vecDungeon[2]-&gt;Set_Back(false); }
+            else { m_vecDungeon[2]-&gt;Set_Back(true); }
 
-			m_pStage = m_vecDungeon[2];
-			break;
+            m_pStage = m_vecDungeon[2];
+            break;
 
-		case ST_DF3:
-			if (!m_vecDungeon[3]) { m_vecDungeon[3] = new CDungeon_F3; }
+        case ST_DF3:
+            if (!m_vecDungeon[3]) { m_vecDungeon[3] = new CDungeon_F3; }
 
-			if (m_ePrevStage == ST_DF2) { m_vecDungeon[3]-&gtSet_Back(false); }
-			else { m_vecDungeon[3]-&gtSet_Back(true); }
+            if (m_ePrevStage == ST_DF2) { m_vecDungeon[3]-&gt;Set_Back(false); }
+            else { m_vecDungeon[3]-&gt;Set_Back(true); }
 
-			m_pStage = m_vecDungeon[3];
-			break;
+            m_pStage = m_vecDungeon[3];
+            break;
 
-		case ST_DF4:
-			if (!m_vecDungeon[4]) { m_vecDungeon[4] = new CDungeon_F4; }
+        case ST_DF4:
+            if (!m_vecDungeon[4]) { m_vecDungeon[4] = new CDungeon_F4; }
 
-			if (m_ePrevStage == ST_DF3) { m_vecDungeon[4]-&gtSet_Back(false); }
-			else { m_vecDungeon[4]-&gtSet_Back(true); }
+            if (m_ePrevStage == ST_DF3) { m_vecDungeon[4]-&gt;Set_Back(false); }
+            else { m_vecDungeon[4]-&gt;Set_Back(true); }
 
-			m_pStage = m_vecDungeon[4];
-			break;
+            m_pStage = m_vecDungeon[4];
+            break;
 
-		case ST_BOSS:
-			m_pStage = new CBoss;
-			break;
-		}
-		m_pStage-&gtInitialize();
+        case ST_BOSS:
+            m_pStage = new CBoss;
+            break;
+        }
+        m_pStage-&gt;Initialize();
 
-		m_ePrevStage = m_eCurStage;
-	}
+        m_ePrevStage = m_eCurStage;
+    }
 
-	static_cast&ltCPlayer*&gt(CObjMgr::Get_Instance()-&gtGet_Player())-&gtSet_KeyLock(false);
-	static_cast&ltCPlayer*&gt(CObjMgr::Get_Instance()-&gtGet_Player())-&gtSet_Visible(true);
+    static_cast&lt;CPlayer*&gt;(CObjMgr::Get_Instance()-&gt;Get_Player())-&gt;Set_KeyLock(false);
+    static_cast&lt;CPlayer*&gt;(CObjMgr::Get_Instance()-&gt;Get_Player())-&gt;Set_Visible(true);
 }</code></pre>
 </details>
 
@@ -468,36 +468,36 @@ Edit 씬에서 타일을 배치·삭제할 수 있는 자체 맵 에디터를 �
 <details class="code-block">
 <summary>Item.cpp — DropItem <span class="file-badge">아이템 드롭 &amp 호밍 흡수</span></summary>
 <pre markdown="0"><code class="language-cpp">void CItem::DropItem() {
-	if (m_bSpawn) {
-		float fJumpPower = m_fPower * m_fTime - GRAVITY * powf(m_fTime, 2) * 0.5f;
-		if (fJumpPower &lt -16.f) { fJumpPower = -16.f; }
+    if (m_bSpawn) {
+        float fJumpPower = m_fPower * m_fTime - GRAVITY * powf(m_fTime, 2) * 0.5f;
+        if (fJumpPower &lt; -16.f) { fJumpPower = -16.f; }
 
-		m_tInfo.fY -= fJumpPower;
-		m_fTime += 0.2f;
-	}
-	else if (!m_bSpawn &amp&amp !m_bPickUp) {
-		m_fFallSpeed += m_fSpeed;
-		if (m_fFallSpeed &gt 16.f) { m_fFallSpeed = 16.f; }
-		m_tInfo.fY += m_fFallSpeed;
-	}
-	else if (!m_bSpawn &amp&amp m_bPickUp &amp&amp m_eItemType == ITEM_MONEY) {
-		Find_Target();
+        m_tInfo.fY -= fJumpPower;
+        m_fTime += 0.2f;
+    }
+    else if (!m_bSpawn &amp;&amp; !m_bPickUp) {
+        m_fFallSpeed += m_fSpeed;
+        if (m_fFallSpeed &gt; 16.f) { m_fFallSpeed = 16.f; }
+        m_tInfo.fY += m_fFallSpeed;
+    }
+    else if (!m_bSpawn &amp;&amp; m_bPickUp &amp;&amp; m_eItemType == ITEM_MONEY) {
+        Find_Target();
 
-		m_tInfo.fX += m_fSpeed * cosf(m_fAngle * (PI / 180.f));
-		m_tInfo.fY -= m_fSpeed * sinf(m_fAngle * (PI / 180.f));
-	}
+        m_tInfo.fX += m_fSpeed * cosf(m_fAngle * (PI / 180.f));
+        m_tInfo.fY -= m_fSpeed * sinf(m_fAngle * (PI / 180.f));
+    }
 }
 
 void CItem::Find_Target() {
-    POINT ptTarget{}, ptItem{};
+POINT ptTarget{}, ptItem{};
 
-	ptTarget.x = (long)CObjMgr::Get_Instance()-&gtGet_Player()-&gtGet_Info().fX;
-	ptTarget.y = (long)CObjMgr::Get_Instance()-&gtGet_Player()-&gtGet_Info().fY;
+    ptTarget.x = (long)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Info().fX;
+    ptTarget.y = (long)CObjMgr::Get_Instance()-&gt;Get_Player()-&gt;Get_Info().fY;
 
-	ptItem.x = (long)m_tInfo.fX;
-	ptItem.y = (long)m_tInfo.fY;
+    ptItem.x = (long)m_tInfo.fX;
+    ptItem.y = (long)m_tInfo.fY;
 
-	m_fAngle = CObjMgr::Get_Instance()-&gtFind_Angle_AtoB(ptTarget, ptItem);
+    m_fAngle = CObjMgr::Get_Instance()-&gt;Find_Angle_AtoB(ptTarget, ptItem);
 }</code></pre>
 </details>
 
