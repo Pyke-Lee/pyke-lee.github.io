@@ -2,7 +2,7 @@
 layout: project
 title: Wizard of Legend 모작 (DirectX9)
 subtitle: 쿼터뷰 로그라이크 액션 게임 팀 프로젝트
-youtube_id: 5Pphtj3nBGY
+youtube_id: gHBg1JuK
 period: 2024.07 (약 1개월)
 team: 4인 (한규만[팀장], 이성호, 이세형, 김승태)
 role: 스킬 시스템, UI, 최종 보스(Master Sura)
