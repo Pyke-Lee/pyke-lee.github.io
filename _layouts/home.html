@@ -41,19 +41,38 @@
         </section>
         {% endif %}
 
-        {% if page.projects %}
         <section class="projects">
             <div class="card-grid">
-                {% for p in page.projects %}
+                {% comment %} layout이 project 또는 minecraft인 페이지만 자동 수집 {% endcomment %}
+                {% assign all_projects = site.pages | where_exp: "p", "p.layout == 'project' or p.layout == 'minecraft'" %}
+                {% comment %} 카테고리 순서: WinAPI → DirectX → Unity → Minecraft {% endcomment %}
+                {% assign winapi_projects = all_projects | where_exp: "p", "p.url contains '/winapi/'" %}
+                {% assign directx_projects = all_projects | where_exp: "p", "p.url contains '/directx/'" %}
+                {% assign unity_projects = all_projects | where_exp: "p", "p.url contains '/unity/'" %}
+                {% assign minecraft_projects = all_projects | where_exp: "p", "p.url contains '/minecraft/'" %}
+                {% assign project_pages = winapi_projects | concat: directx_projects | concat: unity_projects | concat: minecraft_projects %}
+                {% for p in project_pages %}
+                {% comment %} 카테고리: URL 경로에서 자동 추출 {% endcomment %}
+                {% assign category = "" %}
+                {% if p.url contains "/winapi/" %}{% assign category = "WinAPI" %}
+                {% elsif p.url contains "/directx/" %}{% assign category = "DirectX" %}
+                {% elsif p.url contains "/minecraft/" %}{% assign category = "Minecraft" %}
+                {% elsif p.url contains "/unity/" %}{% assign category = "Unity" %}
+                {% endif %}
+                {% comment %} 설명: subtitle 또는 sub {% endcomment %}
+                {% assign desc = p.subtitle | default: p.sub %}
+                {% comment %} 썸네일: youtube_id 또는 videos 첫 항목의 youtube {% endcomment %}
+                {% assign yt = p.youtube_id %}
+                {% if yt == nil and p.videos %}{% assign yt = p.videos[0].youtube %}{% endif %}
                 <a class="card" href="{{ p.url }}">
-                    <div class="card-thumb{% unless p.thumbnail %} card-thumb-empty{% endunless %}"
-                         {% if p.thumbnail %}style="background-image:url('{{ p.thumbnail }}')"{% endif %}>
-                        {% unless p.thumbnail %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
-                        {% if p.category %}<span class="card-category">{{ p.category }}</span>{% endif %}
+                    <div class="card-thumb{% unless yt %} card-thumb-empty{% endunless %}"
+                         {% if yt %}style="background-image:url('https://img.youtube.com/vi/{{ yt }}/mqdefault.jpg')"{% endif %}>
+                        {% unless yt %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
+                        {% if category != "" %}<span class="card-category">{{ category }}</span>{% endif %}
                     </div>
                     <div class="card-body">
                         <h2 class="card-title">{{ p.title }}</h2>
-                        {% if p.desc %}<p class="card-desc">{{ p.desc }}</p>{% endif %}
+                        {% if desc %}<p class="card-desc">{{ desc }}</p>{% endif %}
                         {% if p.tech %}
                         <div class="card-tech">
                             {% for t in p.tech %}<span class="tag">{{ t }}</span>{% endfor %}
@@ -64,7 +83,6 @@
                 {% endfor %}
             </div>
         </section>
-        {% endif %}
 
     </div>
 </main>
