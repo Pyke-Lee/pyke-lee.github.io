@@ -51,9 +51,9 @@ body {
   position: fixed; inset: 0 0 auto 0; height: var(--bar-height);
   background: var(--bar); border-bottom: 1px solid rgba(0,0,0,.08);
   display: flex; align-items: center; gap: 8px;
+  justify-content: space-between;
   padding: 0 var(--side-pad); z-index: 20;
 }
-.spacer { height: var(--bar-height); }
 
 .btn {
   -webkit-tap-highlight-color: transparent; appearance: none;
@@ -411,7 +411,7 @@ a.tag:hover {
    홈 페이지 — 자기소개 + 프로젝트 카드
    ══════════════════════════════════════════════ */
 
-.home {
+.home-page {
   max-width: 960px;
   margin: 0 auto;
   padding: 48px 24px 80px;
@@ -491,6 +491,7 @@ a.tag:hover {
   background-position: center;
   background-color: #000;
 }
+/* 썸네일 없을 때: 흰 배경 + 제목 */
 .card-thumb-empty {
   background-color: #fff;
   display: flex;
@@ -543,7 +544,7 @@ a.tag:hover {
 }
 
 @media (max-width: 480px) {
-  .home { padding: 32px 16px 64px; }
+  .home-page { padding: 32px 16px 64px; }
   .about-name { font-size: 1.7rem; }
   .card-grid { grid-template-columns: 1fr; }
 }
