@@ -548,3 +548,7 @@ a.tag:hover {
   .about-name { font-size: 1.7rem; }
   .card-grid { grid-template-columns: 1fr; }
 }
+
+/* 탑바에 콘텐츠가 가리지 않도록 강제 */
+.spacer { height: 0; }
+#content { padding-top: calc(var(--bar-height) + 16px); }
