@@ -50,7 +50,17 @@
                 {% assign directx_projects = all_projects | where_exp: "p", "p.url contains '/directx/'" %}
                 {% assign unity_projects = all_projects | where_exp: "p", "p.url contains '/unity/'" %}
                 {% assign minecraft_projects = all_projects | where_exp: "p", "p.url contains '/minecraft/'" %}
-                {% assign project_pages = winapi_projects | concat: directx_projects | concat: unity_projects | concat: minecraft_projects %}
+                {% comment %} WinAPI / DirectX / Unity는 personal → team 순으로 재정렬 {% endcomment %}
+                {% assign winapi_personal = winapi_projects | where_exp: "p", "p.url contains '/personal/'" %}
+                {% assign winapi_team = winapi_projects | where_exp: "p", "p.url contains '/team/'" %}
+                {% assign winapi_sorted = winapi_personal | concat: winapi_team %}
+                {% assign directx_personal = directx_projects | where_exp: "p", "p.url contains '/personal/'" %}
+                {% assign directx_team = directx_projects | where_exp: "p", "p.url contains '/team/'" %}
+                {% assign directx_sorted = directx_personal | concat: directx_team %}
+                {% assign unity_personal = unity_projects | where_exp: "p", "p.url contains '/personal/'" %}
+                {% assign unity_team = unity_projects | where_exp: "p", "p.url contains '/team/'" %}
+                {% assign unity_sorted = unity_personal | concat: unity_team %}
+                {% assign project_pages = winapi_sorted | concat: directx_sorted | concat: unity_sorted | concat: minecraft_projects %}
                 {% for p in project_pages %}
                 {% comment %} 카테고리: URL 경로에서 자동 추출 {% endcomment %}
                 {% assign category = "" %}
