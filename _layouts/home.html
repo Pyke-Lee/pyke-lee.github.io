@@ -61,13 +61,32 @@
                 {% endif %}
                 {% comment %} 설명: subtitle 또는 sub {% endcomment %}
                 {% assign desc = p.subtitle | default: p.sub %}
-                {% comment %} 썸네일: youtube_id 또는 videos 첫 항목의 youtube {% endcomment %}
+                {% comment %}
+                썸네일 우선순위:
+                1) 페이지 폴더의 thumbnail.png 파일이 있으면 사용 (자동)
+                2) 없고 front matter thumbnail 지정값이 있으면 사용
+                3) 그래도 없으면 youtube 썸네일 → 없으면 흰 배경+제목
+                {% endcomment %}
+                {% assign thumb = nil %}
+                {% comment %} 1) 폴더에 thumbnail.png 파일이 실제로 있는지 검사 {% endcomment %}
+                {% assign thumb_file = p.url | append: "thumbnail.png" %}
+                {% for sf in site.static_files %}
+                {% if sf.path == thumb_file %}{% assign thumb = thumb_file | relative_url %}{% break %}{% endif %}
+                {% endfor %}
+                {% comment %} 2) 없으면 front matter thumbnail 지정값 {% endcomment %}
+                {% if thumb == nil and p.thumbnail %}
+                {% assign thumb = p.thumbnail | relative_url %}
+                {% endif %}
+                {% comment %} 3) 그래도 없으면 youtube 썸네일 {% endcomment %}
+                {% if thumb == nil %}
                 {% assign yt = p.youtube_id %}
                 {% if yt == nil and p.videos %}{% assign yt = p.videos[0].youtube %}{% endif %}
+                {% if yt %}{% assign thumb = "https://img.youtube.com/vi/" | append: yt | append: "/mqdefault.jpg" %}{% endif %}
+                {% endif %}
                 <a class="card" href="{{ p.url }}">
-                    <div class="card-thumb{% unless yt %} card-thumb-empty{% endunless %}"
-                         {% if yt %}style="background-image:url('https://img.youtube.com/vi/{{ yt }}/mqdefault.jpg')"{% endif %}>
-                        {% unless yt %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
+                    <div class="card-thumb{% unless thumb %} card-thumb-empty{% endunless %}"
+                         {% if thumb %}style="background-image:url('{{ thumb }}')"{% endif %}>
+                        {% unless thumb %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
                         {% if category != "" %}<span class="card-category">{{ category }}</span>{% endif %}
                     </div>
                     <div class="card-body">

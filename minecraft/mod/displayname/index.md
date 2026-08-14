@@ -1,7 +1,7 @@
 ---
 layout: minecraft
 title: DisplayName
-sub: 닉네임 변경 모드
+sub: 인게임에서 닉네임을 변경할 수 있는 모드
 state: Updating
 team:
   - { name: 파이크, role: "Lead, Developer" }
