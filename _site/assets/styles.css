@@ -458,7 +458,7 @@ a.tag:hover {
 .about-history li:last-child { border-bottom: none; }
 .history-date {
   flex-shrink: 0;
-  width: 80px;
+  width: 96px;
   color: var(--ink-faint);
   font-size: 0.85rem;
 }
