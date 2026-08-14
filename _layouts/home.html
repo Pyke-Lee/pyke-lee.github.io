@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+{% include head.html %}
+<body>
+<a href="#content" class="visually-hidden-focusable">본문으로 건너뛰기</a>
+{% include header.html %}
+
+<div class="spacer" aria-hidden="true"></div>
+
+{% include menu.html %}
+<div class="overlay" id="overlay" onclick="toggleMenu()" tabindex="-1" aria-hidden="true"></div>
+
+<main id="content">
+    <div class="home">
+
+        {% if page.author or page.role or page.tech or page.history %}
+        <section class="about">
+            {% if page.author %}
+            <h1 class="about-name">{{ page.author }}</h1>
+            {% endif %}
+            {% if page.role %}
+            <p class="about-role">{{ page.role }}</p>
+            {% endif %}
+
+            {% if page.tech %}
+            <div class="about-tech">
+                {% for t in page.tech %}<span class="tag">{{ t }}</span>{% endfor %}
+            </div>
+            {% endif %}
+
+            {% if page.history %}
+            <ul class="about-history">
+                {% for h in page.history %}
+                <li>
+                    {% if h.date %}<span class="history-date">{{ h.date }}</span>{% endif %}
+                    <span class="history-text">{{ h.text }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if page.projects %}
+        <section class="projects">
+            <div class="card-grid">
+                {% for p in page.projects %}
+                <a class="card" href="{{ p.url }}">
+                    <div class="card-thumb{% unless p.thumbnail %} card-thumb-empty{% endunless %}"
+                         {% if p.thumbnail %}style="background-image:url('{{ p.thumbnail }}')"{% endif %}>
+                        {% unless p.thumbnail %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
+                        {% if p.category %}<span class="card-category">{{ p.category }}</span>{% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ p.title }}</h2>
+                        {% if p.desc %}<p class="card-desc">{{ p.desc }}</p>{% endif %}
+                        {% if p.tech %}
+                        <div class="card-tech">
+                            {% for t in p.tech %}<span class="tag">{{ t }}</span>{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    </div>
+</main>
+
+{% include scripts.html %}
+</body>
+</html>

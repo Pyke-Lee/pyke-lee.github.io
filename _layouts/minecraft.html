@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+{% include head.html %}
+<body>
+<a href="#content" class="visually-hidden-focusable">본문으로 건너뛰기</a>
+{% include header.html %}
+
+<div class="spacer" aria-hidden="true"></div>
+
+{% include menu.html %}
+<div class="overlay" id="overlay" onclick="toggleMenu()" tabindex="-1" aria-hidden="true"></div>
+
+<main id="content">
+    <article class="project">
+
+        <header class="project-header">
+            <h1 class="project-title">{{ page.title }}</h1>
+            {% if page.sub %}
+            <p class="project-subtitle">{{ page.sub }}</p>
+            {% endif %}
+        </header>
+
+        {% if page.date or page.state or page.team or page.credits or page.link or page.copyright %}
+        <div class="project-meta">
+            {% if page.date %}
+            <div class="meta-item">
+                <span class="meta-label">기간</span>
+                <span class="meta-value">{{ page.date }}</span>
+            </div>
+            {% endif %}
+            {% if page.state %}
+            <div class="meta-item">
+                <span class="meta-label">상태</span>
+                <span class="meta-value">
+                    <span class="tag state-tag state-{{ page.state | downcase }}">{{ page.state }}</span>
+                </span>
+            </div>
+            {% endif %}
+            {% if page.team %}
+            <div class="meta-item">
+                <span class="meta-label">제작</span>
+                <span class="meta-value">
+                    {% for m in page.team %}{% if m.url %}<a class="tag" href="{{ m.url }}" target="_blank" rel="noopener">{{ m.name }}{% if m.role %} ({{ m.role }}){% endif %}</a>{% else %}<span class="tag">{{ m.name }}{% if m.role %} ({{ m.role }}){% endif %}</span>{% endif %}{% endfor %}
+                </span>
+            </div>
+            {% endif %}
+            {% if page.credits %}
+            <div class="meta-item">
+                <span class="meta-label">크레딧</span>
+                <span class="meta-value">
+                    {% for c in page.credits %}{% if c.url %}<a class="tag" href="{{ c.url }}" target="_blank" rel="noopener">{{ c.name }}{% if c.role %} ({{ c.role }}){% endif %}</a>{% else %}<span class="tag">{{ c.name }}{% if c.role %} ({{ c.role }}){% endif %}</span>{% endif %}{% endfor %}
+                </span>
+            </div>
+            {% endif %}
+            {% if page.link %}
+            <div class="meta-item">
+                <span class="meta-label">링크</span>
+                <span class="meta-value">
+                    {% for o in page.link %}{% if o.url %}<a class="tag" href="{{ o.url }}" target="_blank" rel="noopener">{{ o.name }}</a>{% else %}<span class="tag">{{ o.name }}</span>{% endif %}{% endfor %}
+                </span>
+            </div>
+            {% endif %}
+            {% if page.copyright %}
+            <div class="meta-item">
+                <span class="meta-label">저작권</span>
+                <span class="meta-value">© Copyright {% for c in page.copyright %}{% if c.url %}<a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.name }}</a>{% else %}{{ c.name }}{% endif %}{% if c.role %} ({{ c.role }}){% endif %}{% unless forloop.last %} · {% endunless %}{% endfor %}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="project-body">
+            {{ content }}
+        </div>
+
+        {% if page.videos %}
+        <hr class="video-divider">
+        <div class="video-list">
+            {% for v in page.videos %}
+            <div class="video-item">
+                <div class="project-meta">
+                    {% if v.date %}
+                    <div class="meta-item">
+                        <span class="meta-label">기간</span>
+                        <span class="meta-value">{{ v.date }}</span>
+                    </div>
+                    {% endif %}
+                    {% if v.title %}
+                    <div class="meta-item">
+                        <span class="meta-label">제목</span>
+                        <span class="meta-value">{{ v.title }}</span>
+                    </div>
+                    {% endif %}
+                    {% if v.desc %}
+                    <div class="meta-item">
+                        <span class="meta-label">설명</span>
+                        <span class="meta-value">{{ v.desc }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if v.youtube %}
+                <div class="video-wrap">
+                    <iframe
+                            src="https://www.youtube-nocookie.com/embed/{{ v.youtube }}?rel=0"
+                            title="{{ v.title }}"
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </article>
+</main>
+
+{% include scripts.html %}
+</body>
+</html>
