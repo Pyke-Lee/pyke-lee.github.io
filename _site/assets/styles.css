@@ -449,6 +449,7 @@ a.tag:hover {
 }
 .about-history li {
   display: flex;
+  align-items: center;
   gap: 14px;
   padding: 7px 0;
   border-bottom: 1px solid var(--divider);
@@ -457,11 +458,12 @@ a.tag:hover {
 .about-history li:last-child { border-bottom: none; }
 .history-date {
   flex-shrink: 0;
-  width: 64px;
+  width: 80px;
   color: var(--ink-faint);
   font-size: 0.85rem;
 }
 .history-text { color: var(--ink); }
+
 
 /* ── 프로젝트 카드 그리드 ── */
 .card-grid {
