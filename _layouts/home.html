@@ -69,6 +69,11 @@
                 {% elsif p.url contains "/minecraft/" %}{% assign category = "Minecraft" %}
                 {% elsif p.url contains "/unity/" %}{% assign category = "Unity" %}
                 {% endif %}
+                {% comment %} 유형: URL 경로에서 personal / team 추출 (minecraft 등은 없음) {% endcomment %}
+                {% assign subtype = "" %}
+                {% if p.url contains "/personal/" %}{% assign subtype = "Personal" %}
+                {% elsif p.url contains "/team/" %}{% assign subtype = "Team" %}
+                {% endif %}
                 {% comment %} 설명: subtitle 또는 sub {% endcomment %}
                 {% assign desc = p.subtitle | default: p.sub %}
                 {% comment %}
@@ -98,6 +103,7 @@
                          {% if thumb %}style="background-image:url('{{ thumb }}')"{% endif %}>
                         {% unless thumb %}<span class="card-thumb-title">{{ p.title }}</span>{% endunless %}
                         {% if category != "" %}<span class="card-category">{{ category }}</span>{% endif %}
+                        {% if subtype != "" %}<span class="card-subtype">{{ subtype }}</span>{% endif %}
                     </div>
                     <div class="card-body">
                         <h2 class="card-title">{{ p.title }}</h2>

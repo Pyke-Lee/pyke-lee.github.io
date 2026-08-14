@@ -556,3 +556,19 @@ a.tag:hover {
 /* 탑바에 콘텐츠가 가리지 않도록 강제 */
 .spacer { height: 0; }
 #content { padding-top: calc(var(--bar-height) + 16px); }
+
+.card-subtype {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.card-thumb-empty .card-subtype {
+  background: var(--tag-bg);
+  color: var(--ink-light);
+}
