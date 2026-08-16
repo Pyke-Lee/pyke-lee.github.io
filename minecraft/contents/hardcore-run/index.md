@@ -12,5 +12,6 @@ copyright:
   - { name: Erudites, url: "https://erudites.dev/" }
 videos:
   - date: 2026-08-01 ~ 2026-08-02
+    youtube: 9Nw7Du1lHYE
   - date: 2026-08-14 ~ 2026-08-15
 ---
