@@ -97,7 +97,14 @@
                         <span class="meta-value">{{ v.desc }}</span>
                     </div>
                     {% endif %}
+                    {% if v.member %}
+                    <div class="meta-item">
+                        <span class="meta-label">멤버</span>
+                        <span class="meta-value">{{ v.member }}</span>
+                    </div>
+                    {% endif %}
                 </div>
+
                 {% if v.youtube %}
                 <div class="video-wrap">
                     <iframe

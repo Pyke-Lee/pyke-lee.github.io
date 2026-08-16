@@ -17,5 +17,6 @@ copyright:
 videos:
   - title: 멸망한 세계에서 살아남으면 생기는 일
     desc: 김마늘 주최, SOOP 지원으로 진행된 크로아 내수 서버 콘텐츠 영상입니다.
+    member: 김마늘, 치요, 류키, 요요, 만타
     youtube: gStXFjSjHe0
 ---
