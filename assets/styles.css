@@ -406,6 +406,11 @@ a.tag:hover {
   border-color: rgba(22, 163, 74, .35);
   color: #15803d;
 }
+.state-in-progress {
+  background: rgba(234, 179, 8, .15);
+  border-color: rgba(234, 179, 8, .45);
+  color: #a16207;
+}
 
 /* ══════════════════════════════════════════════
    홈 페이지 — 자기소개 + 프로젝트 카드
