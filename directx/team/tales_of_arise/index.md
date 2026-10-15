@@ -12,22 +12,22 @@ github: https://github.com/Pyke-Lee/FinalTeamProject
 
 ## 프로젝트 개요
 
-Tales of Arise를 모티브로 한 3D 액션 RPG 팀 프로젝트입니다.
-자체 제작한 DirectX11 프레임워크(GameObject–Component 구조, 프로토타입 클론 방식) 위에 게임을 구현했으며, 6인 팀으로 진행했습니다.
+3D 액션 RPG Tales of Arise를 DirectX11로 모작한 팀 프로젝트입니다.
+6인이 함께 진행했으며, 자체 제작한 DirectX11 프레임워크(GameObject–Component 구조, 프로토타입 클론 방식) 위에 게임을 구현했습니다.
 저는 이 프로젝트에서 **UI 전반과 사운드 매니저**를 담당했습니다.
 
-전투 HUD, 인게임 메뉴, 요리·상점·여관 등 각종 상호작용 UI와 별 잡기(StarCatch) 미니게임, 그리고 음식·장비 버프를 통합 관리하는 버프 매니저, FMOD 기반 사운드 매니저를 구현했습니다.
+전투 HUD와 인게임 메뉴, 요리·상점·여관 등의 상호작용 UI, 별 잡기(StarCatch) 미니게임을 만들었고, 음식·장비 버프를 통합 관리하는 버프 매니저와 FMOD 기반 사운드 매니저도 구현했습니다.
 
 ## UI 아키텍처
 
-UI는 크게 두 축으로 나뉩니다. 화면 단위의 UI 오브젝트는 엔진의 `CUI`(→ `CGameObject`)를 상속받아 프로토타입 복제 방식으로 생성되고, UI 내부의 개별 버튼은 추상 클래스 `CButton`을 상속받아 만듭니다.
-각 UI는 `Opening_Routine` / `Closing_Routine`으로 열고 닫으며, `Priority_Update`에서 입력을, `Update` / `Late_Update`에서 상태를, `Render`에서 셰이더 기반 렌더링을 수행합니다.
+UI는 크게 두 갈래로 나뉩니다. 화면 단위 UI 오브젝트는 엔진의 `CUI`(→ `CGameObject`)를 상속받아 프로토타입 복제 방식으로 생성하고, UI 안의 개별 버튼은 추상 클래스 `CButton`을 상속받아 만듭니다.
+각 UI는 `Opening_Routine` / `Closing_Routine`으로 열고 닫으며, `Priority_Update`에서 입력, `Update` / `Late_Update`에서 상태 갱신, `Render`에서 셰이더 기반 렌더링을 처리합니다.
 
 ### 버튼 베이스 클래스
 
 `CButton`은 모든 버튼의 공통 동작을 정의하는 추상 클래스입니다.
-위치·크기·중심·혼합색을 담는 `UI_BUTTON_DESC`로 초기화되고, 마우스가 버튼 사각 영역 안에 있는지(`IsPosInRect`) 판정하는 호버 로직과, 선택 시 강조 테두리를 그리는 `Render_Hilights`를 공통으로 제공합니다.
-`Select` / `IsSelected` / `Interect`를 가상 함수로 두어 파생 버튼이 각자의 동작을 구현하도록 했습니다.
+위치·크기·중심·혼합색을 담은 `UI_BUTTON_DESC`로 초기화하며, 마우스가 버튼 영역 안에 있는지 판정하는 호버 로직(`IsPosInRect`)과 선택 시 강조 테두리를 그리는 `Render_Hilights`를 공통으로 제공합니다.
+`Select` / `IsSelected` / `Interect`는 가상 함수로 두어 파생 버튼이 각자 동작을 구현하도록 했습니다.
 
 <details class="code-block">
 <summary>Button.h <span class="file-badge">버튼 추상 베이스 클래스</span></summary>
@@ -111,8 +111,8 @@ ID3D11DeviceContext*			m_pContext = { nullptr };
 END</code></pre>
 </details>
 
-`Initialize`에서는 Transform과 버퍼·셰이더·선택 텍스처 컴포넌트를 붙이고, 윈도우 좌표계를 중심 기준(`(x - 화면너비/2)`, `(-y + 화면높이/2)`)으로 변환해 오쏘그래픽 투영 행렬을 세팅합니다.
-`IsPosInRect`는 버튼의 사각 경계와 마우스 좌표를 비교해 호버 여부를 반환하고, `Render_Hilights`는 선택된 버튼에 한해 프레임 텍스처와 강조색(`m_vHilightColor`)을 알파 블렌딩으로 덧그립니다.
+`Initialize`에서는 Transform·버퍼·셰이더·선택 텍스처 컴포넌트를 붙이고, 윈도우 좌표를 화면 중심 기준(`(x - 화면너비/2)`, `(-y + 화면높이/2)`)으로 변환한 뒤 직교 투영 행렬을 설정합니다.
+`IsPosInRect`는 버튼의 사각 경계와 마우스 좌표를 비교해 호버 여부를 반환하고, `Render_Hilights`는 선택된 버튼에만 프레임 텍스처와 강조색(`m_vHilightColor`)을 알파 블렌딩으로 덧그립니다.
 
 <details class="code-block">
 <summary>Button.cpp <span class="file-badge">버튼 공통 로직 구현</span></summary>
@@ -265,12 +265,12 @@ if (!bSelect) { return S_OK; }
 
 ## 전투 HUD
 
-전투 UI는 조작 중인 플레이어의 체력 게이지와, 타깃팅된 몬스터의 머리 위 체력 바를 렌더링합니다.
-핵심은 3D 월드에 있는 캐릭터의 위치를 화면(스크린) 좌표로 투영해 2D UI를 정확히 얹는 것입니다.
+전투 UI는 현재 조작 중인 플레이어의 체력 게이지와 타깃으로 지정된 몬스터의 머리 위 체력 바를 그립니다.
+핵심은 3D 월드에 있는 캐릭터의 위치를 스크린 좌표로 투영해 2D UI를 정확한 자리에 올리는 것입니다.
 
-`ControlledPlayerInfo`는 플레이어의 월드 행렬에 뷰·투영 행렬을 곱해 클립 공간 좌표를 구하고, w로 나눠 NDC로 만든 뒤 뷰포트 크기를 이용해 스크린 좌표로 환산합니다.
-`TargetMonsterInfo`는 먼저 타깃의 콜라이더 타입(AABB/OBB/Sphere)에 맞춰 절두체 컬링으로 화면 밖 대상을 걸러낸 뒤, 바운딩 높이(`vExtents.y`)만큼 올린 위치를 투영해 체력 바를 머리 위에 배치합니다.
-두 함수 모두 체력 비율이 급변하지 않도록, 표시용 체력(`m_fPlayerHp`, `m_fTargetHp`)이 실제 비율을 향해 증가 시 빠르게(×0.5) · 감소 시 느리게(×0.3) 따라오도록 보간합니다.
+`ControlledPlayerInfo`는 플레이어의 월드 행렬에 뷰·투영 행렬을 곱해 클립 공간 좌표를 구하고, w로 나눠 NDC로 바꾼 뒤 뷰포트 크기로 스크린 좌표를 계산합니다.
+`TargetMonsterInfo`는 먼저 타깃의 콜라이더 타입(AABB/OBB/Sphere)에 맞게 절두체 컬링을 해 화면 밖 대상을 걸러내고, 바운딩 높이(`vExtents.y`)만큼 올린 위치를 투영해 체력 바를 머리 위에 배치합니다.
+두 함수 모두 체력 바가 갑자기 바뀌지 않도록 표시용 체력(`m_fPlayerHp`, `m_fTargetHp`)이 실제 비율을 따라가게 보간하며, 증가할 때는 빠르게(×0.5), 감소할 때는 느리게(×0.3) 따라갑니다.
 
 <details class="code-block">
 <summary>UI_Battle.cpp <span class="file-badge">HP 바 월드→스크린 투영 (발췌)</span></summary>
@@ -371,10 +371,10 @@ if (!pTarget || pTarget-&gt;Get_Dead() || !pTarget-&gt;Get_Render()) { m_bTarget
 
 ## 요리 UI
 
-요리 UI는 학습한 레시피 목록을 카테고리별로 정렬해 버튼으로 보여주고, 조리 시 별 잡기 미니게임의 성공 횟수에 비례한 버프를 적용합니다.
+요리 UI는 학습한 레시피를 카테고리별로 정렬해 버튼으로 보여 주고, 조리할 때 별 잡기 미니게임의 성공 횟수에 비례해 버프를 적용합니다.
 
-`Sort_Recipes`는 레시피 매니저에서 학습된 레시피를 카테고리(`iIndex == -1`이면 전체)별로 모아 정렬 맵에 담고, 스크롤 가능한 버튼 최대 개수(최대 8개)를 설정한 뒤 화면에 바인딩합니다.
-`Update_Recipes`는 스크롤 방향(`bCheck`)에 따라 피벗 인덱스를 이동시키며 표시 목록을 갱신하고, 목록 끝에서는 순환하도록 처리합니다.
+`Sort_Recipes`는 레시피 매니저에서 학습한 레시피를 카테고리별(`iIndex == -1`이면 전체)로 모아 정렬 맵에 담고, 스크롤 목록에 표시할 버튼 수(최대 8개)를 정한 뒤 화면에 바인딩합니다.
+`Update_Recipes`는 스크롤 방향(`bCheck`)에 따라 피벗 인덱스를 옮겨 표시 목록을 갱신하고, 목록 끝에 닿으면 처음으로 순환합니다.
 
 <details class="code-block">
 <summary>UI_Food.cpp <span class="file-badge">레시피 정렬·스크롤 (발췌)</span></summary>
@@ -433,8 +433,8 @@ m_pRecipes.clear();
 }</code></pre>
 </details>
 
-`Apply_Buff`는 미니게임 성공 횟수(`iIndex`)를 받아, 선택된 레시피의 버프 타입(최대체력·공격력·방어력·관통)에 따라 효과량을 `0.2 × 성공횟수` 비율로 산출합니다.
-산출한 버프 정보를 버프 매니저에 넘겨 적용하고, 재료를 차감한 뒤 페이드·대사 연출과 함께 관련 UI를 닫습니다.
+`Apply_Buff`는 미니게임 성공 횟수(`iIndex`)를 받아, 선택한 레시피의 버프 타입(최대체력·공격력·방어력·관통)에 따라 효과량을 `0.2 × 성공 횟수` 비율로 계산합니다.
+계산한 버프 정보를 버프 매니저에 넘겨 적용하고, 재료를 차감한 뒤 페이드·대사 연출과 함께 관련 UI를 닫습니다.
 
 <details class="code-block">
 <summary>UI_Food.cpp <span class="file-badge">버프 적용 (발췌)</span></summary>
@@ -488,10 +488,10 @@ m_pRecipes.clear();
 ## 별 잡기 미니게임
 
 조리 성공도를 결정하는 별 잡기(StarCatch) 미니게임입니다.
-게이지 위를 왕복하는 별을 정해진 범위 안에서 멈추면 성공하며, 성공할수록 판정 범위가 좁아지고 별의 속도가 빨라져 난이도가 올라갑니다.
+게이지 위를 왕복하는 별을 정해진 범위 안에서 멈추면 성공이며, 성공할수록 판정 범위는 좁아지고 별은 빨라져 난이도가 올라갑니다.
 
-`Priority_Update`에서는 프레임 애니메이션(시작·타임·정지·성공·실패)을 상태 기계처럼 전환하고, 고정 상태(`m_bFix[1]`)일 때 별의 위치 비율(`m_fStarRatio`)을 성공 횟수에 비례한 속도로 0↔1 사이에서 왕복시킵니다.
-`StarCatchRange`는 성공 횟수가 늘수록 판정 범위(`m_fRange`)를 좁히고, `CheckStarCatch`는 정지 버튼을 누른 순간 별의 위치가 중앙 판정 범위 안에 있으면 성공(5회 성공 시 최종 성공), 벗어나면 실패로 처리합니다.
+`Priority_Update`에서는 프레임 애니메이션(시작·타임·정지·성공·실패)을 상태 기계처럼 전환하고, 고정 상태(`m_bFix[1]`)에서는 별의 위치 비율(`m_fStarRatio`)을 성공 횟수에 비례한 속도로 0과 1 사이에서 왕복시킵니다.
+`StarCatchRange`는 성공 횟수가 늘수록 판정 범위(`m_fRange`)를 좁히고, `CheckStarCatch`는 정지 버튼을 누른 순간 별이 중앙 판정 범위 안에 있으면 성공(5회 성공 시 최종 성공), 벗어나 있으면 실패로 처리합니다.
 
 <details class="code-block">
 <summary>UI_StarCatch.cpp <span class="file-badge">판정 범위·성공 판정 (발췌)</span></summary>
@@ -532,8 +532,8 @@ if (m_tFrames[TEX_START].bEnable) { return; }
 
 ## 버프 매니저
 
-음식·개인·팀·무기·방어구·장신구 등 서로 다른 출처의 버프를 하나로 통합 관리하는 싱글턴 매니저입니다.
-출처별 버프를 각각 보관하고, 어떤 버프든 적용·해제될 때마다 `Calc_Buff_Total`로 플레이어별 총합을 다시 계산합니다.
+음식·개인·팀·무기·방어구·장신구 등 여러 출처의 버프를 한곳에서 통합 관리하는 싱글톤 매니저입니다.
+출처별 버프를 따로 보관하고, 버프가 적용·해제될 때마다 `Calc_Buff_Total`로 플레이어별 총합을 다시 계산합니다.
 
 <details class="code-block">
 <summary>Buff_Manager.h <span class="file-badge">버프 매니저 클래스 구조</span></summary>
@@ -620,9 +620,9 @@ Engine::CGameInstance*						m_pGameInstance = { nullptr };
 END</code></pre>
 </details>
 
-`Apply_Buff_From_Food` 등 각 적용 함수는 해당 출처 슬롯에 버프 정보를 복사하고 지속시간을 초기화한 뒤 총합을 재계산합니다.
-`Update`는 지속시간이 있는 버프(음식·팀·개인)의 타이머를 전역 타임스케일에 맞춰 감소시키고, 만료되면 총합을 다시 계산합니다.
-`Calc_Buff_Total`은 기존에 더해둔 최대체력 버프를 먼저 빼고, 만료된 출처를 정리한 뒤, 모든 출처의 스탯을 합산해 플레이어별 총합을 갱신하고 최대체력 증가분을 다시 반영합니다.
+`Apply_Buff_From_Food` 등의 적용 함수는 해당 출처 슬롯에 버프 정보를 복사하고 지속 시간을 초기화한 뒤 총합을 다시 계산합니다.
+`Update`는 지속 시간이 있는 버프(음식·팀·개인)의 타이머를 전역 타임스케일에 맞춰 줄이고, 만료되면 총합을 다시 계산합니다.
+`Calc_Buff_Total`은 이전에 더해 둔 최대체력 버프를 먼저 빼고 만료된 출처를 정리한 뒤, 모든 출처의 스탯을 합산해 플레이어별 총합을 갱신하고 최대체력 증가분을 다시 반영합니다.
 
 <details class="code-block">
 <summary>Buff_Manager.cpp <span class="file-badge">버프 합산·갱신 구현</span></summary>
@@ -796,7 +796,7 @@ if (m_tBuff_Total[i].iMaxHp &gt; 0) { PLAYERMANAGER-&gt;Add_MaxHP((CPlayer::PLAY
 ## 사운드 매니저
 
 FMOD 기반 사운드 매니저입니다.
-Master 아래에 BGM·Voice·SFX를 두고, SFX 아래에 다시 UI·게임·캐릭터별(SFX_ALPEN, SFX_SHIONNE 등) 하위 그룹을 두는 계층형 채널 그룹으로 구성해, 그룹 단위로 볼륨·음소거·일시정지를 제어할 수 있게 했습니다.
+Master 아래에 BGM·Voice·SFX 그룹을 두고, SFX 아래에 다시 UI·게임·캐릭터별(SFX_ALPEN, SFX_SHIONNE 등) 하위 그룹을 둔 계층형 채널 그룹으로 구성해, 그룹 단위로 볼륨·음소거·일시정지를 제어할 수 있게 했습니다.
 
 <details class="code-block">
 <summary>Sound_Manager.h <span class="file-badge">사운드 매니저 클래스 구조</span></summary>
@@ -896,11 +896,11 @@ System* m_pSystem = {nullptr};
 END</code></pre>
 </details>
 
-`Initialize_Sound_Manager`는 채널 그룹들을 생성하고 `addGroup`으로 계층을 연결합니다.
-`Load_SoundFolder`는 폴더를 재귀 순회하며 확장자가 일치하는 파일을 로드하고, 2D/3D 여부에 따라 태그에 접미사(`_2D` / `_3D`)를 붙여 사운드 키로 등록합니다.
-`Play`는 사운드를 재생하면서 위치 정보가 있으면 3D 감쇠(min/max distance)를 설정하고, BGM이면 루프 모드로 재생합니다.
-`PlayWithDuration`은 지정한 지속시간이 지나면 자동으로 멈추도록 재생 중인 채널을 `m_PlayingSounds`로 추적하며, `Update_Sound_Manager`가 매 프레임 누적 시간을 확인해 만료된 채널을 정지·제거합니다.
-`CheckDuplication_PlaySound`는 같은 사운드가 이미 재생 중이면 중복 재생하지 않도록 그룹 내 채널을 검사합니다.
+`Initialize_Sound_Manager`는 채널 그룹을 생성하고 `addGroup`으로 계층을 연결합니다.
+`Load_SoundFolder`는 폴더를 재귀적으로 순회하며 확장자가 맞는 파일을 로드하고, 2D/3D 여부에 따라 태그에 접미사(`_2D` / `_3D`)를 붙여 사운드 키로 등록합니다.
+`Play`는 사운드를 재생할 때 위치 정보가 있으면 3D 감쇠(min/max distance)를 설정하고, BGM은 루프 모드로 재생합니다.
+`PlayWithDuration`은 지정한 시간이 지나면 자동으로 멈추도록 재생 중인 채널을 `m_PlayingSounds`에 기록하고, `Update_Sound_Manager`가 매 프레임 누적 시간을 확인해 만료된 채널을 정지·제거합니다.
+`CheckDuplication_PlaySound`는 같은 사운드가 이미 재생 중이면 다시 재생하지 않도록 그룹 내 채널을 검사합니다.
 
 <details class="code-block">
 <summary>Sound_Manager.cpp <span class="file-badge">FMOD 사운드 매니저 구현</span></summary>

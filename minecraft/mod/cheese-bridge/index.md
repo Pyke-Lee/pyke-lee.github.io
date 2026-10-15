@@ -1,7 +1,7 @@
 ---
 layout: minecraft
 title: Cheese Bridge
-sub: 치지직과 숲의 OpenAPI를 이용한 후원연동 라이브러리
+sub: 치지직·SOOP OpenAPI를 이용한 후원 연동 라이브러리
 state: Updating
 team:
   - { name: 파이크, role: "Lead, Developer" }

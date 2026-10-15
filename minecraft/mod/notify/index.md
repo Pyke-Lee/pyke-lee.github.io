@@ -1,7 +1,7 @@
 ---
 layout: minecraft
 title: Notify
-sub: 공지사항, 알림, 도움 요청 등 관리자 관리 기능이 모여있는 모드
+sub: 공지사항·알림·도움 요청 등 서버 관리 기능을 모은 모드
 state: Updating
 team:
   - { name: 파이크, role: "Lead, Developer" }

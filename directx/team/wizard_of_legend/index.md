@@ -12,19 +12,19 @@ github: https://github.com/Pyke-Lee/SR-Team-Project
 
 ## 프로젝트 개요
 
-Wizard of Legend를 모티브로 한 쿼터뷰 로그라이크 액션 게임입니다.
-4인 팀 프로젝트로 진행했으며, 자체 제작한 DirectX9 프레임워크(GameObject–Component 구조, 프로토타입 클론 방식) 위에 게임을 구현했습니다.
+쿼터뷰 로그라이크 액션 게임 Wizard of Legend를 DirectX9로 모작한 팀 프로젝트입니다.
+4인이 함께 진행했으며, 자체 제작한 DirectX9 프레임워크(GameObject–Component 구조, 프로토타입 클론 방식) 위에 게임을 구현했습니다.
 저는 이 프로젝트에서 **스킬 캐스팅 시스템, 상태창 UI, 최종 보스(Master Sura)**를 담당했습니다.
 
-속성별 마법(불·공기·물·번개·혼돈)을 퀵슬롯에 장착해 조합하는 것이 핵심 재미이며, 각 스킬은 팀장이 잡아준 `CSkill` 기반 프레임 위에서 실제 동작을 구현하는 방식으로 만들었습니다.
+게임의 핵심 재미는 속성별 마법(불·공기·물·번개·혼돈)을 퀵슬롯에 장착해 조합하는 것이며, 각 스킬은 팀장이 설계한 `CSkill` 기반 구조 위에 실제 동작을 구현하는 방식으로 만들었습니다.
 
 ## 스킬 캐스팅 시스템
 
 ### 퀵슬롯과 쿨다운 구조
 
-플레이어는 5개의 퀵슬롯(좌클릭·스페이스·우클릭·Q·E)에 스킬을 장착합니다.
-각 슬롯은 `SKILL` 열거형 값으로 어떤 스킬이 장착됐는지 관리하고, `COOLDOWN` 구조체 배열(`m_tCooldown`)로 슬롯별 쿨타임을 관리합니다.
-`Key_Input`에서 입력을 감지하면 해당 슬롯의 쿨다운을 확인한 뒤, 장착된 스킬 종류에 따라 대응하는 `Cast_*` 함수를 호출합니다.
+플레이어는 퀵슬롯 5개(좌클릭·스페이스·우클릭·Q·E)에 스킬을 장착합니다.
+슬롯에 장착된 스킬은 `SKILL` 열거형 값으로, 슬롯별 쿨다운은 `COOLDOWN` 구조체 배열(`m_tCooldown`)로 관리합니다.
+`Key_Input`에서 입력이 들어오면 해당 슬롯의 쿨다운을 확인한 뒤, 장착된 스킬에 맞는 `Cast_*` 함수를 호출합니다.
 
 <details class="code-block">
 <summary>Player.h <span class="file-badge">플레이어 클래스 구조</span></summary>
@@ -219,8 +219,8 @@ Engine::CTexture* m_pTextureCom[PLAYERHOOD::HOOD_END][PLAYERMOTION::MOTION_END][
 </details>
 
 `Key_Input`은 이동(WASD)·대시(스페이스)·공격(마우스/Q/E) 입력을 처리합니다.
-각 공격 입력마다 먼저 해당 슬롯의 쿨다운이 남아 있는지 검사하고, 남아 있지 않으면 장착된 스킬에 맞는 `Cast_*` 함수를 호출하는 구조입니다.
-대시 상태에서는 삼각함수 기반 감속 곡선(`cosf`)으로 대시 이동을 처리합니다.
+공격 입력마다 해당 슬롯의 쿨다운이 남아 있는지 먼저 검사하고, 쿨다운이 끝났을 때만 장착된 스킬에 맞는 `Cast_*` 함수를 호출합니다.
+대시 중에는 삼각함수(`cosf`) 기반 감속 곡선으로 이동을 처리합니다.
 
 <details class="code-block">
 <summary>Player.cpp — Key_Input <span class="file-badge">입력·쿨다운·캐스팅 분기</span></summary>
@@ -552,8 +552,8 @@ else if (Engine::Get_DIKeyDown(DIK_F8)) { _vec3 vPos { 0.f, 0.f, 0.f }; m_pTrans
 </details>
 
 `Update_Cooldown`은 매 프레임 모든 슬롯의 쿨다운 타이머를 누적합니다.
-`Cast_ShockNova`는 마나가 가득 찼을 때(`m_iMana == m_iMaxMana`)는 상하좌우 4방향으로, 아닐 때는 중앙 한 방향으로 스킬을 생성하는 마나 소모형 강화 캐스팅입니다.
-스킬을 생성한 뒤에는 해당 스킬의 쿨다운 값을 슬롯에 세팅합니다.
+`Cast_ShockNova`는 마나를 소모하는 강화 캐스팅으로, 마나가 가득 찼을 때(`m_iMana == m_iMaxMana`)는 상하좌우 4방향에, 그렇지 않으면 중앙 한 곳에만 스킬을 생성합니다.
+스킬을 생성한 뒤에는 해당 스킬의 쿨다운 값을 슬롯에 설정합니다.
 
 <details class="code-block">
 <summary>Player.cpp — Update_Cooldown / Cast_ShockNova <span class="file-badge">쿨다운 갱신·마나 소모 캐스팅</span></summary>
@@ -623,9 +623,9 @@ return;
 
 ### ShockNova (번개)
 
-번개 속성 스킬로, `Set_Direction`으로 플레이어 기준 상하좌우/중앙 위치에 노바를 배치합니다.
-플레이어의 Look·Right 벡터를 정규화해 방향별로 위치를 계산하고, 원형 충돌체(`Set_Default_Circle`)를 설정합니다.
-`Move_Frame`으로 스프라이트 프레임을 진행시키고, 마지막 프레임에 도달하면 스스로 사망 처리됩니다.
+번개 속성 스킬로, `Set_Direction`으로 플레이어 기준 상하좌우 또는 중앙에 노바를 배치합니다.
+플레이어의 Look·Right 벡터를 정규화해 방향별 위치를 계산하고, 원형 충돌체(`Set_Default_Circle`)를 설정합니다.
+`Move_Frame`으로 스프라이트 프레임을 진행하고, 마지막 프레임에 도달하면 스스로 소멸합니다.
 
 <details class="code-block">
 <summary>ShockNova.cpp <span class="file-badge">번개 노바 스킬</span></summary>
@@ -789,8 +789,8 @@ Engine::CSkill::Free();
 ### WindSlash (공기)
 
 기본 근접 공격으로 쓰이는 공기 속성 참격입니다.
-`Set_Direction`에서 플레이어의 바라보는 각도(`fAngle`)에 방향별 오프셋을 더해 참격을 회전시키고, 좌우 텍스처를 무작위로 골라(`m_bRight`) 좌우 스윙을 번갈아 표현합니다.
-사각 충돌체(`Set_Default_Square`)를 사용하며, 충돌 카운트가 일정 수(4)에 도달하면 충돌을 비활성화해 다단히트를 제한합니다.
+`Set_Direction`에서 플레이어가 바라보는 각도(`fAngle`)에 방향별 오프셋을 더해 참격을 회전시키고, 좌우 텍스처 중 하나를 무작위로 골라(`m_bRight`) 좌우 스윙을 표현합니다.
+사각 충돌체(`Set_Default_Square`)를 사용하며, 충돌 횟수가 일정 수(4)에 도달하면 충돌을 꺼서 다단 히트를 제한합니다.
 
 <details class="code-block">
 <summary>WindSlash.cpp <span class="file-badge">공기 참격 스킬</span></summary>
@@ -964,7 +964,7 @@ Engine::CSkill::Free();
 
 ## UI - 상태창
 
-상태창은 퀵슬롯·스킬 아이콘·쿨다운·체력/마나 게이지·초상화·코인, 그리고 최종 보스전의 보스 체력·보호막 바를 렌더링합니다.
+상태창은 퀵슬롯·스킬 아이콘·쿨다운·체력/마나 게이지·초상화·코인과, 최종 보스전의 보스 체력·보호막 바를 렌더링합니다.
 
 <details class="code-block">
 <summary>Status.h <span class="file-badge">상태창 UI 클래스</span></summary>
@@ -1032,9 +1032,9 @@ _float					m_fBossBack = 1.f;
 };</code></pre>
 </details>
 
-`Render_UI`는 퀵슬롯에 장착된 스킬을 순회하며 아이콘을 그리고, 각 슬롯의 쿨다운 비율을 부채꼴 버퍼(`CFanBuffer`)로 시각화합니다.
-쿨다운이 도는 동안에는 남은 시간을 숫자로도 표시합니다.
-최종 보스전(`SC_BOSS_FINAL`)에서는 보스의 체력 바와 함께, 지연 감소하는 뒷 체력 바(`m_fBossBack`)와 보호막(Shield) 바를 별도로 계산해 겹쳐 그립니다.
+`Render_UI`는 퀵슬롯에 장착된 스킬을 순회하며 아이콘을 그리고, 슬롯별 쿨다운 비율을 부채꼴 버퍼(`CFanBuffer`)로 시각화합니다.
+쿨다운 중에는 남은 시간도 숫자로 표시합니다.
+최종 보스전(`SC_BOSS_FINAL`)에서는 보스 체력 바와 함께, 한 박자 늦게 줄어드는 뒷 체력 바(`m_fBossBack`)와 보호막(Shield) 바를 따로 계산해 겹쳐 그립니다.
 
 <details class="code-block">
 <summary>Status.cpp — Render_UI <span class="file-badge">퀵슬롯·쿨다운·보스바 렌더</span></summary>
@@ -1200,9 +1200,9 @@ _float					m_fBossBack = 1.f;
 }</code></pre>
 </details>
 
-`Update_Guage`는 체력·마나 게이지의 스케일과 위치를 실시간 비율로 갱신합니다.
-플레이어 체력이 감소하면 실제 체력 바는 즉시 줄지만, 뒷 체력 바(`m_fBackHp`)는 감소 폭에 따라 단계적으로 천천히 따라오도록 하여 피격 연출을 강조합니다.
-보스 체력 바에도 동일한 지연 감소 로직을 적용합니다.
+`Update_Guage`는 체력·마나 게이지의 스케일과 위치를 현재 비율에 맞춰 실시간으로 갱신합니다.
+플레이어가 피해를 입으면 실제 체력 바는 바로 줄어들지만, 뒷 체력 바(`m_fBackHp`)는 감소 폭에 따라 단계적으로 천천히 따라오게 해 피격 연출을 강조했습니다.
+보스 체력 바에도 같은 지연 감소 로직을 적용했습니다.
 
 <details class="code-block">
 <summary>Status.cpp — Update_Guage <span class="file-badge">게이지 비율·지연 감소</span></summary>
@@ -1280,9 +1280,9 @@ _float					m_fBossBack = 1.f;
 
 ## 최종 보스 - Master Sura
 
-최종 보스 Master Sura는 골렘을 부리는 0페이즈와, 후드를 벗고 직접 싸우는 1페이즈로 나뉩니다.
-각 페이즈는 패턴 목록을 벡터로 관리하고, 목록을 무작위로 섞어(`Swap_Phase*_Pattern`) 순서대로 시전하는 방식입니다.
-피격 시 체력 대신 보호막(Shield)을 먼저 소모하고, 패턴을 쓸 때마다 체력 비례로 보호막을 회복(`AddShieldFromHealthPercentage`)해 지구전을 유도합니다.
+최종 보스 Master Sura는 골렘을 부리는 0페이즈와 후드를 벗고 직접 싸우는 1페이즈로 나뉩니다.
+페이즈마다 패턴 목록을 벡터로 관리하며, 목록을 무작위로 섞은 뒤(`Swap_Phase*_Pattern`) 순서대로 시전합니다.
+피격 시 체력보다 보호막(Shield)을 먼저 소모하고, 패턴을 쓸 때마다 체력에 비례해 보호막을 회복(`AddShieldFromHealthPercentage`)해 장기전을 유도합니다.
 
 <details class="code-block">
 <summary>MasterSura.h <span class="file-badge">최종 보스 클래스 구조</span></summary>
@@ -1395,10 +1395,10 @@ Engine::CTransform*		m_pTransformCom_Golem = nullptr;
 };</code></pre>
 </details>
 
-`Update_GameObject`가 매 프레임 페이즈 전환 검사(`Check_Phase`), 골렘 이동, 패턴 진행(`Phase_Pattern`), 대시·강타·메테오 처리를 순서대로 호출합니다.
-`Check_Phase`는 0페이즈 종료 시 후드 모션으로, 1페이즈 종료 시 사망 모션으로 전환합니다.
-`Phase_Pattern`은 현재 페이즈에 따라 골렘 모션 목록 또는 보스 본체 모션 목록을 타이머 기반으로 하나씩 꺼내 시전하고, 목록을 다 쓰면 다시 섞습니다.
-`Pattern_Bombing`은 페이즈별로 폭격 패턴을 다르게 전개합니다 — 0페이즈는 플레이어 방향으로 한 줄, 1페이즈는 세 줄을 시간차를 두고 깔아 회피 난이도를 높입니다.
+`Update_GameObject`는 매 프레임 페이즈 전환 검사(`Check_Phase`), 골렘 이동, 패턴 진행(`Phase_Pattern`), 대시·강타·메테오 처리를 차례로 호출합니다.
+`Check_Phase`는 0페이즈가 끝나면 후드 모션으로, 1페이즈가 끝나면 사망 모션으로 전환합니다.
+`Phase_Pattern`은 현재 페이즈에 맞는 골렘 또는 보스 본체의 모션 목록에서 타이머에 맞춰 패턴을 하나씩 꺼내 시전하고, 목록을 다 쓰면 다시 섞습니다.
+`Pattern_Bombing`은 페이즈마다 폭격 패턴을 다르게 펼칩니다. 0페이즈에서는 플레이어 방향으로 한 줄, 1페이즈에서는 세 줄을 시간차를 두고 깔아 회피 난이도를 높입니다.
 
 <details class="code-block">
 <summary>MasterSura.cpp — Update / Check_Phase / Phase_Pattern / Pattern_Bombing <span class="file-badge">페이즈 전환·패턴 시전</span></summary>

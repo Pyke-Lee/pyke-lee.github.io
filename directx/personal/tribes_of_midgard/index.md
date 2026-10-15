@@ -12,13 +12,13 @@ github: https://github.com/Pyke-Lee/Personal-Portfolio
 
 ## 프로젝트 개요
 
-Tribes of Midgard를 모티브로 한 탑다운 로그라이크 액션 게임입니다.
-상용 엔진 없이 DirectX11을 직접 다루는 자체 프레임워크를 구축하고, 그 위에 게임 로직을 얹는 것을 목표로 했습니다.
-프로젝트는 크게 재사용 가능한 **Engine 정적 라이브러리**와 실제 게임을 구현한 **Client**로 분리되어 있습니다.
+탑다운 로그라이크 액션 게임 Tribes of Midgard를 모작한 개인 프로젝트입니다.
+상용 엔진 없이 DirectX11을 직접 다루는 자체 프레임워크를 만들고, 그 위에 게임 로직을 구현하는 것을 목표로 했습니다.
+프로젝트는 재사용 가능한 **Engine 정적 라이브러리**와 실제 게임을 구현한 **Client**로 나뉩니다.
 
 ## 아키텍처
 
-엔진은 레벨(Level) → 레이어(Layer) → 게임오브젝트(GameObject) → 컴포넌트(Component)로 이어지는 계층 구조를 가집니다.
+엔진은 레벨(Level) → 레이어(Layer) → 게임오브젝트(GameObject) → 컴포넌트(Component)로 이어지는 계층 구조입니다.
 
 - **GameInstance** — 엔진의 모든 매니저에 접근하는 단일 진입점(퍼사드)
 - **GameObject_Manager** — 프로토타입 등록·복제, 레이어별 오브젝트 관리 및 갱신
@@ -26,15 +26,15 @@ Tribes of Midgard를 모티브로 한 탑다운 로그라이크 액션 게임입
 - **Renderer** — 렌더 그룹별로 오브젝트를 모아 디퍼드 렌더링 파이프라인 실행
 - **Input_Device** — DirectInput 기반 키보드·마우스 상태 관리
 
-모든 엔진 객체는 참조 카운팅 기반 `CBase`를 상속받아 `Safe_AddRef` / `Safe_Release`로 수명을 관리합니다.
+모든 엔진 객체는 참조 카운팅 기반의 `CBase`를 상속받으며, `Safe_AddRef` / `Safe_Release`로 수명을 관리합니다.
 
 ## 엔진 프레임워크
 
 ### 게임오브젝트 기반 구조
 
 모든 게임 오브젝트는 추상 클래스 `CGameObject`를 상속받습니다.
-`CGameObject`는 Transform 컴포넌트를 기본으로 보유하고, `m_Components` 맵으로 추가 컴포넌트(Shader, Model, Collider 등)를 이름 기반으로 관리합니다.
-`Clone`을 순수 가상 함수로 두어, 프로토타입 인스턴스를 복제하는 방식으로 실제 오브젝트를 생성합니다.
+`CGameObject`는 Transform 컴포넌트를 기본으로 가지며, 그 밖의 컴포넌트(Shader, Model, Collider 등)는 `m_Components` 맵에서 이름으로 관리합니다.
+`Clone`을 순수 가상 함수로 두고, 프로토타입 인스턴스를 복제해 실제 오브젝트를 생성합니다.
 
 <details class="code-block">
 <summary>GameObject.h <span class="file-badge">게임오브젝트 기반 클래스</span></summary>
@@ -103,8 +103,8 @@ ID3D11DeviceContext*						m_pContext = { nullptr };
 END</code></pre>
 </details>
 
-`Add_Component`는 GameInstance를 통해 컴포넌트 프로토타입을 복제해 받아온 뒤, 중복 태그가 없으면 `m_Components`에 등록하고 참조 카운트를 올립니다.
-`Free`에서는 보유한 모든 컴포넌트를 `Safe_Release`로 해제하여 메모리 누수를 방지합니다.
+`Add_Component`는 GameInstance를 통해 컴포넌트 프로토타입의 복제본을 받아 오고, 태그가 중복되지 않으면 `m_Components`에 등록한 뒤 참조 카운트를 올립니다.
+`Free`에서는 보유한 컴포넌트를 모두 `Safe_Release`로 해제해 메모리 누수를 막습니다.
 
 <details class="code-block">
 <summary>GameObject.cpp <span class="file-badge">컴포넌트 관리 구현</span></summary>
@@ -204,9 +204,9 @@ auto iter = m_Components.find(strComponentTag);
 
 ### 프로토타입 패턴
 
-오브젝트 생성 비용을 줄이기 위해 프로토타입 패턴을 사용합니다.
-레벨 로딩 시점에 각 오브젝트의 원본(프로토타입)을 태그와 함께 등록해 두고, 실제 배치할 때는 `Clone_Prototype`으로 복제본을 만들어 레이어에 추가합니다.
-`Add_GameObject_To_Layer`는 프로토타입을 복제한 뒤 해당 레이어가 없으면 새로 생성하여 등록하고, 있으면 기존 레이어에 오브젝트를 추가합니다.
+오브젝트 생성 비용을 줄이기 위해 프로토타입 패턴을 사용했습니다.
+레벨을 로딩할 때 각 오브젝트의 원본(프로토타입)을 태그와 함께 등록해 두고, 실제로 배치할 때는 `Clone_Prototype`으로 복제본을 만들어 레이어에 추가합니다.
+`Add_GameObject_To_Layer`는 프로토타입을 복제한 뒤, 대상 레이어가 없으면 새로 만들어 등록하고 있으면 기존 레이어에 추가합니다.
 
 <details class="code-block">
 <summary>GameObject_Manager.cpp <span class="file-badge">프로토타입 등록·복제·레이어 관리</span></summary>
@@ -339,9 +339,9 @@ if (iLevelIndex &gt;= m_iNumLevels || iLevelIndex &lt; 0) { return nullptr; }
 
 ### 상태·방향 비트플래그와 입력 처리
 
-플레이어의 상태(`STATE`)와 방향(`DIRECT`)은 비트플래그로 정의되어, 여러 상태를 동시에 표현하거나 방향키 조합으로 8방향 회전을 처리할 수 있습니다.
-`Key_Input`은 DirectInput 상태를 조회하여 이동·구르기·무기 교체·공격 콤보를 처리합니다.
-공격은 좌클릭 연타로 3단 콤보(`STATE_ATTACK_0` → `1` → `2`)가 이어지고, 우클릭은 스페셜 게이지를 소모하는 특수 공격입니다.
+플레이어의 상태(`STATE`)와 방향(`DIRECT`)을 비트플래그로 정의해, 여러 상태를 동시에 표현하고 방향키 조합으로 8방향 회전을 처리합니다.
+`Key_Input`은 DirectInput 입력 상태를 읽어 이동·구르기·무기 교체·공격 콤보를 처리합니다.
+좌클릭을 연타하면 3단 콤보(`STATE_ATTACK_0` → `1` → `2`)가 이어지고, 우클릭은 스페셜 게이지를 소모하는 특수 공격입니다.
 방향키 조합에 따라 `Turn_RotationY`로 캐릭터를 해당 각도로 회전시킵니다.
 
 <details class="code-block">
@@ -572,10 +572,10 @@ END</code></pre>
 
 ### 무기 (Sword / Hand)
 
-무기는 플레이어 본체에 종속된 파트(`CPart`)로 구현되며, 부모의 상태 포인터(`m_pParentState`)를 참조해 공격 모션 중에만 충돌체를 활성화합니다.
-`Sword`의 `Priority_Update_GameObject`는 공격 상태에 진입하면 타이머를 초기화하고, 일정 시간이 지난 뒤 충돌을 켭니다.
-`Update_GameObject`에서 몬스터와 충돌(ENTER)하면 데미지를 입히고, 특수 공격이 아닐 때는 스페셜 게이지를 충전합니다.
-`Late_Update_GameObject`에서는 부모 소켓 행렬에 자신의 로컬 변환을 곱해 손에 무기가 붙은 것처럼 월드 행렬을 계산합니다.
+무기는 플레이어 본체에 종속된 파트(`CPart`)로, 부모의 상태 포인터(`m_pParentState`)를 참조해 공격 모션 중에만 충돌체를 켭니다.
+`Sword`의 `Priority_Update_GameObject`는 공격 상태에 들어가면 타이머를 초기화하고, 일정 시간이 지난 뒤 충돌을 활성화합니다.
+`Update_GameObject`에서는 몬스터와 충돌(ENTER)하면 데미지를 주고, 특수 공격이 아니면 스페셜 게이지를 충전합니다.
+`Late_Update_GameObject`에서는 부모의 소켓 행렬에 자신의 로컬 변환을 곱해, 무기가 손에 붙어 움직이도록 월드 행렬을 계산합니다.
 
 <details class="code-block">
 <summary>Sword.cpp <span class="file-badge">무기 충돌·소켓 부착</span></summary>
@@ -629,9 +629,9 @@ FAILED_CHECK_RETURN(m_pGameInstance-&gt;Add_DebugComponent(m_pColliderCom), L"Fa
 
 ### Seekling — 추적·근접·원거리 복합
 
-Seekling은 플레이어와 거대 나무(Yggdrasil)를 상황에 따라 번갈아 목표로 삼습니다.
-`LookAtPos`에서 플레이어와의 거리를 계산해, 가까우면 플레이어를 추적·근접 공격하고, 멀면 Yggdrasil 쪽으로 방향을 틀어 원거리 투사체 공격 상태로 전환합니다.
-`FireProjectile`은 원거리 공격 상태일 때 일정 시간이 지나면 발사 소켓 위치에서 투사체를 생성하여 발사합니다.
+Seekling은 상황에 따라 플레이어와 거대 나무(Yggdrasil)를 번갈아 목표로 삼습니다.
+`LookAtPos`에서 플레이어와의 거리를 계산해, 가까우면 플레이어를 쫓아가 근접 공격하고 멀면 Yggdrasil 쪽으로 방향을 틀어 원거리 투사체 공격 상태로 전환합니다.
+`FireProjectile`은 원거리 공격 상태에서 일정 시간이 지나면 발사 소켓 위치에 투사체를 생성해 발사합니다.
 
 <details class="code-block">
 <summary>Seekling.cpp — LookAtPos / FireProjectile <span class="file-badge">추적·공격 상태 전환</span></summary>
@@ -692,9 +692,9 @@ if (m_iState != STATE_ATTACK_YGGDRASIL || m_bFire) { return; }
 
 ### Bombling — 자폭 돌진
 
-Bombling은 목표에 접근하면 자폭하는 몬스터입니다.
-`LookAtPos`에서 플레이어가 사거리 안이면 접근하다가 매우 가까워지면(`fDist < 2.5f`) 폭발 상태로 전환하고, 플레이어가 멀면 Yggdrasil을 향해 이동하다가 근접 시 폭발합니다.
-폭발이 확정되면 이후 회전을 멈춰 그 자리에서 터지도록 합니다.
+Bombling은 목표에 다가가 자폭하는 몬스터입니다.
+`LookAtPos`에서 플레이어가 사거리 안에 있으면 다가가다가 충분히 가까워지면(`fDist < 2.5f`) 폭발 상태로 전환하고, 플레이어가 멀리 있으면 Yggdrasil을 향해 이동하다가 가까워지면 폭발합니다.
+폭발이 확정되면 회전을 멈춰 그 자리에서 터지게 했습니다.
 
 <details class="code-block">
 <summary>Bombling.cpp — LookAtPos <span class="file-badge">자폭 돌진 로직</span></summary>
@@ -733,7 +733,7 @@ Bombling은 목표에 접근하면 자폭하는 몬스터입니다.
 ### Spawner — 야간 몬스터 스폰
 
 Spawner는 밤이 되면 일정 주기로 몬스터를 생성합니다.
-`Priority_Update_GameObject`에서 누적 시간이 스폰 딜레이를 넘으면, 미리 정의된 스폰 지점 중 하나를 무작위로 골라 Seekling 또는 Bombling을 생성하고 해당 위치에 배치합니다.
+`Priority_Update_GameObject`에서 누적 시간이 스폰 딜레이를 넘으면, 미리 정해 둔 스폰 지점 중 하나를 무작위로 골라 Seekling 또는 Bombling을 생성해 배치합니다.
 
 <details class="code-block">
 <summary>Spawner.cpp <span class="file-badge">스폰 주기·랜덤 배치</span></summary>
@@ -781,9 +781,9 @@ m_fSpawnDelay = 5.f;
 
 ### 디퍼드 렌더링
 
-렌더러는 오브젝트를 렌더 그룹별로 분류해 순서대로 그리는 디퍼드 렌더링 방식입니다.
-`Draw_Renderer`가 그림자 → 논블렌드(디퓨즈/노멀/뎁스 MRT) → 라이팅 → 최종 합성 → 블렌드 → UI 순으로 패스를 실행합니다.
-반투명 오브젝트(`RENDER_BLEND`)는 그리기 전에 카메라 깊이 기준으로 정렬하여 올바른 알파 합성 순서를 보장합니다.
+렌더러는 오브젝트를 렌더 그룹별로 분류해 패스 순서대로 그리는 디퍼드 렌더링 구조입니다.
+`Draw_Renderer`는 그림자 → 논블렌드(디퓨즈/노멀/뎁스 MRT) → 라이팅 → 최종 합성 → 블렌드 → UI 순으로 패스를 실행합니다.
+반투명 오브젝트(`RENDER_BLEND`)는 그리기 전에 카메라와의 깊이를 기준으로 정렬해 알파 합성 순서가 올바르게 유지되도록 합니다.
 
 <details class="code-block">
 <summary>Renderer.cpp — Draw_Renderer <span class="file-badge">디퍼드 렌더 패스</span></summary>
@@ -828,9 +828,9 @@ m_RenderGameObjects[RENDER_BLEND].sort([](CGameObject* pSrc, CGameObject* pDst)-
 
 ### 스키닝 애니메이션 셰이더
 
-캐릭터 메시는 GPU 스키닝으로 애니메이션됩니다.
-정점 셰이더에서 각 정점의 본 인덱스(`vBlendIndex`)와 가중치(`vBlendWeight`)로 본 행렬들을 가중 합산하여 최종 본 행렬을 만든 뒤, 정점을 변환합니다.
-네 번째 가중치는 나머지 세 개의 합을 1에서 뺀 값으로 계산합니다.
+캐릭터 메시의 애니메이션은 GPU 스키닝으로 처리합니다.
+정점 셰이더에서 각 정점의 본 인덱스(`vBlendIndex`)와 가중치(`vBlendWeight`)로 본 행렬을 가중 합산해 최종 본 행렬을 만든 뒤 정점을 변환합니다.
+네 번째 가중치는 1에서 나머지 세 가중치의 합을 뺀 값으로 계산합니다.
 
 <details class="code-block">
 <summary>Shader_VtxAnimMesh.hlsl — VS_MAIN <span class="file-badge">GPU 스키닝 정점 셰이더</span></summary>
@@ -879,9 +879,9 @@ VS_OUT Out = (VS_OUT)0;
 
 ### 디졸브 이펙트
 
-몬스터 사망 시 노이즈 텍스처 기반 디졸브로 사라지는 효과를 픽셀 셰이더에서 처리합니다.
-`smoothstep`으로 디졸브 경계를 계산하고, 경계 부근에서는 테두리 색을 더해 불타는 듯한 가장자리를 표현합니다.
-임계값을 시간에 따라 올려 점진적으로 사라지게 합니다.
+몬스터가 죽으면 노이즈 텍스처 기반 디졸브로 사라지는 효과를 픽셀 셰이더에서 처리합니다.
+`smoothstep`으로 디졸브 경계를 계산하고, 경계 부근에 테두리 색을 더해 불타는 듯한 가장자리를 표현합니다.
+임계값을 시간에 따라 올려 점점 사라지게 합니다.
 
 <details class="code-block">
 <summary>Shader_VtxAnimMesh.hlsl — PS_MAIN_DISSOLVE <span class="file-badge">디졸브 픽셀 셰이더</span></summary>

@@ -1,7 +1,7 @@
 ---
 layout: minecraft
 title: 블럭 숨바꼭질
-sub: 블럭으로 변신하여 숨바꼭질하는 콘텐츠
+sub: 블록으로 변신해 숨바꼭질하는 콘텐츠
 state: Live
 team:
   - { name: 파이크, role: "Lead, Developer" }
