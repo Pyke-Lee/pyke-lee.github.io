@@ -2,7 +2,7 @@
 layout: minecraft
 title: 크로아 놀이터 (하드코어)
 sub: 죽으면 초기화되는 하드코어 야생에서 엔더 드래곤 처치를 목표로 하는 콘텐츠
-state: Live
+state: Delivered
 team:
   - { name: 파이크, role: "Lead, Developer" }
 credits:
